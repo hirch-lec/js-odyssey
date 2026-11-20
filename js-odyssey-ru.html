@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<title>JS Odyssey — изучай JavaScript, играя</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0e1a;--panel:#121829;--panel2:#182036;--line:#263052;--line2:#1b2340;
+  --text:#e9edf7;--muted:#8a96b8;--js:#f7df1e;--jsd:#b9a40f;
+  --good:#3ddc97;--goodd:#1f9e68;--bad:#ff5d73;--badd:#c0374c;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,"Liberation Mono",monospace;
+  --round:ui-rounded,"SF Pro Rounded","Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:var(--round);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+  radial-gradient(1100px 600px at 8% -10%,rgba(247,223,30,.09),transparent 60%),
+  radial-gradient(900px 600px at 110% 10%,rgba(179,136,255,.11),transparent 60%),
+  radial-gradient(800px 500px at 50% 115%,rgba(76,201,240,.09),transparent 60%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:34px 34px;-webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+button{font:inherit;color:inherit}
+code,.mono{font-family:var(--mono)}
+[hidden]{display:none!important}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:80}
+
+/* ---------- buttons ---------- */
+.btn{--c:var(--js);--d:var(--jsd);--t:#1a1600;appearance:none;border:0;border-radius:14px;padding:14px 22px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:15px;color:var(--t);background:var(--c);box-shadow:0 5px 0 var(--d);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .15s;white-space:nowrap;user-select:none}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--d)}
+.btn:disabled{--c:#262f4c;--d:#181f36;--t:#5f6a8c;cursor:not-allowed;filter:none}
+.btn:disabled:active{transform:none;box-shadow:0 5px 0 var(--d)}
+.btn.ghost{--c:var(--panel2);--d:#0c111e;--t:var(--text);box-shadow:0 5px 0 var(--d),inset 0 0 0 2px var(--line)}
+.btn.ghost:active{box-shadow:0 1px 0 var(--d),inset 0 0 0 2px var(--line)}
+.btn.good{--c:var(--good);--d:var(--goodd);--t:#03140c}
+.btn.bad{--c:var(--bad);--d:var(--badd);--t:#fff}
+.btn.sm{padding:11px 16px;font-size:13px}
+.btn.big{padding:18px 40px;font-size:18px;border-radius:18px}
+.icon-btn{width:42px;height:42px;border-radius:12px;border:0;background:var(--panel2);box-shadow:inset 0 0 0 2px var(--line);cursor:pointer;font-size:18px;display:grid;place-items:center;flex:none}
+.icon-btn:active{transform:scale(.94)}
+.link{background:none;border:0;color:var(--muted);cursor:pointer;font-weight:700;font-size:13px}
+.link:hover{color:var(--text)}
+
+/* ---------- title ---------- */
+.title{min-height:100vh;display:grid;place-items:center;padding:32px 20px;position:relative;overflow:hidden}
+.floaters{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.floaters span{position:absolute;bottom:-60px;left:var(--x);font-family:var(--mono);font-weight:700;font-size:var(--s);color:var(--c);opacity:0;animation:drift var(--d) linear infinite;animation-delay:var(--dl)}
+@keyframes drift{0%{transform:translateY(0) rotate(-6deg);opacity:0}10%{opacity:.22}85%{opacity:.18}100%{transform:translateY(-115vh) rotate(8deg);opacity:0}}
+.title-inner{position:relative;text-align:center;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:22px}
+.logo{display:flex;align-items:center;gap:16px}
+.logo .badge{width:84px;height:84px;border-radius:20px;background:var(--js);color:#111;font:900 40px/1 var(--round);display:flex;align-items:flex-end;justify-content:flex-end;padding:0 10px 8px 0;box-shadow:0 8px 0 var(--jsd),0 0 60px rgba(247,223,30,.35);transform:rotate(-6deg);animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{transform:rotate(-2deg) translateY(-6px)}}
+.logo h1{font-size:clamp(46px,11vw,72px);font-weight:900;letter-spacing:-.02em;background:linear-gradient(180deg,#fff 20%,#b7c3e6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{color:var(--muted);font-size:17px;line-height:1.55}
+.tag code{color:var(--js);background:rgba(247,223,30,.08);padding:1px 6px;border-radius:6px}
+.title-stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:var(--panel2);box-shadow:inset 0 0 0 1.5px var(--line);font-weight:800;font-size:14px;white-space:nowrap}
+.foot-note{color:#56618a;font-size:12px}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:20;background:rgba(10,14,26,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line2)}
+.topbar-in{max-width:760px;margin:0 auto;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));display:flex;align-items:center;gap:10px}
+.mini-logo{display:flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;font-weight:900;font-size:18px}
+.mini-logo i{font-style:normal;width:30px;height:30px;border-radius:8px;background:var(--js);color:#111;font-size:14px;display:flex;align-items:flex-end;justify-content:flex-end;padding:0 4px 2px 0;font-weight:900}
+.grow{flex:1}
+
+/* ---------- map ---------- */
+.map{max-width:760px;margin:0 auto;padding:18px 16px 80px}
+.tier{margin:18px 0 34px}
+.tier-head{position:relative;border-radius:20px;padding:18px 18px 18px 20px;background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 18%,var(--panel)),var(--panel));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--tc) 40%,transparent);display:flex;align-items:center;gap:14px;overflow:hidden}
+.tier-head::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:var(--tc);opacity:.08}
+.tier-ico{font-size:30px;width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:rgba(0,0,0,.25);flex:none}
+.tier-head h2{font-size:20px;font-weight:900}
+.tier-head h2 small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tc);font-weight:800;margin-bottom:2px}
+.tier-head p{color:var(--muted);font-size:14px;margin-top:3px}
+.tier-prog{margin-left:auto;text-align:right;font-weight:800;font-size:13px;color:var(--muted);flex:none;position:relative;z-index:1}
+.tier-prog b{display:block;font-size:18px;color:var(--js)}
+.tier.locked .tier-head{filter:grayscale(.8);opacity:.6}
+.path{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 0 6px}
+.node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;transform:translateX(calc(var(--o) * 1px * var(--k,1)))}
+.node{position:relative;width:78px;height:78px;border-radius:50%;border:0;cursor:pointer;font-size:32px;background:var(--tc);box-shadow:0 7px 0 var(--td),inset 0 -6px 0 rgba(0,0,0,.12),inset 0 4px 0 rgba(255,255,255,.25);transition:transform .12s}
+.node:hover{transform:scale(1.05)}
+.node:active{transform:translateY(5px);box-shadow:0 2px 0 var(--td)}
+.node.boss{width:96px;height:96px;font-size:40px}
+.node.boss::before{content:"БОСС";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#ff3d5a;color:#fff;font-size:10px;font-weight:900;letter-spacing:.12em;padding:3px 8px;border-radius:999px;box-shadow:0 2px 0 #a71d33}
+.node.locked{background:#283150;box-shadow:0 7px 0 #171d33,inset 0 -6px 0 rgba(0,0,0,.12);filter:grayscale(1);cursor:pointer}
+.node.locked span{opacity:.35}
+.node.current::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid var(--tc);animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.25);opacity:0}}
+.start-flag{position:absolute;top:-38px;left:50%;transform:translateX(-50%);background:#fff;color:#111;font-size:12px;font-weight:900;letter-spacing:.08em;padding:6px 10px;border-radius:10px;white-space:nowrap;animation:hop 1.2s ease-in-out infinite;pointer-events:none}
+.start-flag::after{content:"";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff;border-bottom:0}
+@keyframes hop{50%{transform:translateX(-50%) translateY(-4px)}}
+.node-title{font-weight:800;font-size:13px;color:var(--text);text-align:center;max-width:140px}
+.node-wrap.is-locked .node-title{color:#566186}
+.mini-stars{font-size:14px;letter-spacing:2px;color:#2f3a5e;line-height:1}
+.mini-stars .on{color:var(--js);text-shadow:0 0 8px rgba(247,223,30,.5)}
+.cert-card{margin:10px 0 0;border-radius:22px;padding:22px;text-align:center;background:linear-gradient(135deg,#2a2208,#121829 60%);box-shadow:inset 0 0 0 2px rgba(247,223,30,.35);display:flex;flex-direction:column;align-items:center;gap:12px}
+.cert-card.locked{background:var(--panel);box-shadow:inset 0 0 0 2px var(--line)}
+.cert-card .big-ico{font-size:46px}
+.cert-card p{color:var(--muted)}
+.pbar{width:100%;max-width:340px;height:12px;border-radius:99px;background:var(--line2);overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--js),#ffb703);border-radius:99px;transition:width .6s}
+
+/* ---------- level ---------- */
+.level{min-height:100vh;padding-bottom:140px}
+.lvl-top{position:sticky;top:0;z-index:20;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.lvl-top-in{max-width:760px;margin:0 auto;padding:12px 16px 8px;padding-top:max(12px,env(safe-area-inset-top));display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:16px;border-radius:99px;background:var(--line2);overflow:hidden;position:relative}
+.bar .fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--tc),color-mix(in srgb,var(--tc) 60%,#fff));transition:width .5s cubic-bezier(.3,1.4,.5,1);position:relative}
+.bar .fill::after{content:"";position:absolute;left:8px;right:8px;top:3px;height:4px;border-radius:9px;background:rgba(255,255,255,.35)}
+.hearts{display:flex;gap:2px}
+.hearts svg{width:26px;height:26px;fill:#ff4d6d;filter:drop-shadow(0 2px 0 #a3203a);transition:transform .3s}
+.hearts svg.lost{fill:#2b3352;filter:none;transform:scale(.85)}
+.hearts svg.breaking{animation:heartbreak .6s}
+@keyframes heartbreak{0%{transform:scale(1)}30%{transform:scale(1.5) rotate(-12deg);fill:#ff4d6d}100%{transform:scale(.85)}}
+.lvl-sub{max-width:760px;margin:0 auto;padding:0 16px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lvl-name{font-weight:800;color:var(--muted);font-size:14px;margin-right:auto}
+.lvl-name b{color:var(--tc)}
+.chip.timer.urgent{background:#3a1220;box-shadow:inset 0 0 0 1.5px var(--bad);color:#ffb3bf;animation:throb .5s ease-in-out infinite alternate}
+@keyframes throb{to{transform:scale(1.08)}}
+.chip.hot{background:#3a2208;box-shadow:inset 0 0 0 1.5px #ff8c42;color:#ffc58f}
+.task-wrap{max-width:760px;margin:0 auto;padding:8px 16px}
+.card{background:var(--panel);border-radius:22px;padding:22px;box-shadow:inset 0 0 0 1.5px var(--line),0 20px 50px rgba(0,0,0,.25)}
+.enter{animation:slideIn .38s cubic-bezier(.2,1.2,.4,1)}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.task-type{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--tc);margin-bottom:10px}
+.again{color:#ffb703;background:rgba(255,183,3,.1);padding:4px 8px;border-radius:8px;letter-spacing:.06em}
+.task-q{font-size:20px;line-height:1.4;font-weight:800;margin-bottom:16px}
+.task-q code,.exp code,.brief code,.hintbox code,.toast code{font-size:.9em;background:rgba(255,255,255,.08);padding:1px 6px;border-radius:6px;color:#ffe873}
+pre.code{background:#0b1020;border-radius:14px;padding:16px 18px;overflow:auto;font:15px/1.65 var(--mono);white-space:pre;box-shadow:inset 0 0 0 1px var(--line);margin-bottom:16px;tab-size:2}
+.c-kw{color:#c792ea}.c-str{color:#c3e88d}.c-num{color:#f78c6c}.c-com{color:#5f6d92;font-style:italic}.c-fn{color:#82aaff}.c-lit{color:#ff9cac}.c-cls{color:#ffcb6b}.c-op{color:#89ddff}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;background:var(--panel2);border:0;box-shadow:inset 0 0 0 2px var(--line),0 4px 0 var(--line2);font:600 16px var(--mono);cursor:pointer;transition:transform .08s,box-shadow .15s,background .15s}
+.opt:hover{background:#1d2742}
+.opt:active{transform:translateY(3px);box-shadow:inset 0 0 0 2px var(--line),0 1px 0 var(--line2)}
+.opt .k{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font:800 13px var(--round);background:var(--bg);box-shadow:inset 0 0 0 1.5px var(--line);color:var(--muted)}
+.opt.sel{background:rgba(76,201,240,.1);box-shadow:inset 0 0 0 2px #4cc9f0,0 4px 0 #1f7c99}
+.opt.sel .k{background:#4cc9f0;color:#032;box-shadow:none}
+.opt.right{background:rgba(61,220,151,.12);box-shadow:inset 0 0 0 2px var(--good),0 4px 0 var(--goodd)}
+.opt.right .k{background:var(--good);color:#032;box-shadow:none}
+.opt.wrong{background:rgba(255,93,115,.12);box-shadow:inset 0 0 0 2px var(--bad),0 4px 0 var(--badd)}
+.opt.wrong .k{background:var(--bad);color:#fff;box-shadow:none}
+.opts.locked .opt{pointer-events:none}
+.blank{font:inherit;background:rgba(247,223,30,.1);border:0;border-bottom:2px dashed var(--js);color:var(--js);text-align:center;outline:none;border-radius:6px 6px 0 0;padding:0 4px;min-width:4ch}
+.blank:focus{background:rgba(247,223,30,.18)}
+.blank.right{color:var(--good);border-color:var(--good);background:rgba(61,220,151,.12)}
+.blank.wrong{color:var(--bad);border-color:var(--bad);background:rgba(255,93,115,.12)}
+.hintbox{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,183,3,.08);box-shadow:inset 0 0 0 1.5px rgba(255,183,3,.35);color:#ffe2a8;font-size:15px;line-height:1.5;animation:slideIn .3s}
+/* order */
+.order-zone{min-height:120px;border-radius:16px;padding:10px;background:#0b1020;box-shadow:inset 0 0 0 2px var(--line);display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.order-empty{color:#4b5679;font-size:14px;text-align:center;margin:auto;padding:16px}
+.order-label{text-align:center;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 8px}
+.order-pool{display:flex;flex-direction:column;gap:8px}
+.ln{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:12px;padding:10px 12px;background:var(--panel2);box-shadow:inset 0 0 0 1.5px var(--line),0 3px 0 var(--line2);cursor:pointer;font:14.5px/1.4 var(--mono);white-space:pre;overflow-x:auto;animation:pop .22s}
+.ln:active{transform:translateY(2px)}
+.ln code{white-space:pre}
+.ln.placed{background:#121a30;box-shadow:inset 0 0 0 1px var(--line)}
+.ln .ln-n{flex:none;width:20px;color:#4b5679;font-size:12px;text-align:right}
+.ln.right{box-shadow:inset 0 0 0 1.5px var(--good)}
+.ln.wrong{box-shadow:inset 0 0 0 1.5px var(--bad);background:rgba(255,93,115,.08)}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+/* editor */
+.editor-tools{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:13px}
+.editor{position:relative;height:270px;border-radius:14px;background:#0b1020;box-shadow:inset 0 0 0 1.5px var(--line);overflow:hidden}
+.editor:focus-within{box-shadow:inset 0 0 0 2px var(--tc)}
+.editor pre,.editor textarea{position:absolute;inset:0;margin:0;padding:14px 16px;border:0;font:15px/1.6 var(--mono);letter-spacing:0;white-space:pre;word-wrap:normal;overflow-wrap:normal;tab-size:2;-moz-tab-size:2}
+.editor pre{pointer-events:none;overflow:hidden;color:var(--text)}
+.editor textarea{background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:var(--js);resize:none;outline:none;overflow:auto}
+.editor textarea::selection{background:rgba(130,170,255,.3);-webkit-text-fill-color:transparent}
+.keys{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.keys::-webkit-scrollbar{display:none}
+.key{flex:none;min-width:40px;padding:9px 10px;border-radius:10px;border:0;background:var(--panel2);box-shadow:inset 0 0 0 1.5px var(--line),0 3px 0 var(--line2);font:700 15px var(--mono);cursor:pointer;touch-action:pan-x}
+.key:active{transform:translateY(2px);box-shadow:inset 0 0 0 1.5px var(--line)}
+.tests{margin-top:14px;display:grid;gap:6px}
+.tests h4{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+.test{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:12px;background:#0d1324;font:13.5px/1.45 var(--mono);box-shadow:inset 0 0 0 1px var(--line2);transition:background .2s}
+.test .ti{flex:none;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font:900 12px var(--round);background:var(--line);color:var(--muted)}
+.test.pass{background:rgba(61,220,151,.07);box-shadow:inset 0 0 0 1px rgba(61,220,151,.4)}
+.test.pass .ti{background:var(--good);color:#032}
+.test.fail{background:rgba(255,93,115,.07);box-shadow:inset 0 0 0 1px rgba(255,93,115,.4)}
+.test.fail .ti{background:var(--bad);color:#fff}
+.test .tx{min-width:0;overflow-wrap:anywhere}
+.test .got{color:#ff9cac;display:block}
+.test .exp-v{color:var(--muted)}
+.tests.running .test{animation:scan 1s infinite}
+@keyframes scan{50%{opacity:.5}}
+.console{margin-top:10px;border-radius:12px;background:#05080f;padding:10px 12px;font:13px/1.5 var(--mono);color:#a9b4d6;max-height:140px;overflow:auto;box-shadow:inset 0 0 0 1px var(--line2)}
+.console b{color:#5f6d92;font-weight:400}
+.err-box{margin-top:10px;border-radius:12px;padding:10px 12px;background:rgba(255,93,115,.08);box-shadow:inset 0 0 0 1px rgba(255,93,115,.4);color:#ffb3bf;font:13.5px/1.5 var(--mono);overflow-wrap:anywhere}
+/* actions + sheet */
+.actions{position:fixed;left:0;right:0;bottom:0;z-index:30;background:linear-gradient(transparent,rgba(10,14,26,.95) 30%);padding:26px 16px max(16px,env(safe-area-inset-bottom))}
+.actions-in{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.actions-in .btn:last-child{min-width:150px}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;transform:translateY(110%);transition:transform .35s cubic-bezier(.2,1.1,.4,1);padding:18px 16px max(18px,env(safe-area-inset-bottom));border-top:3px solid}
+.sheet.show{transform:none}
+.sheet.ok{background:#0e2b20;border-color:var(--good)}
+.sheet.no{background:#2d1119;border-color:var(--bad)}
+.sheet-in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px;max-height:62vh}
+.sheet-head{display:flex;align-items:center;gap:12px}
+.sheet-head .ico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:900;flex:none}
+.sheet.ok .ico{background:var(--good);color:#032}
+.sheet.no .ico{background:var(--bad);color:#fff}
+.sheet h3{font-size:22px;font-weight:900}
+.sheet.ok h3{color:var(--good)}
+.sheet.no h3{color:#ff8ea0}
+.exp{color:#d5dcef;line-height:1.55;font-size:15.5px;overflow:auto}
+.exp pre.code{margin:8px 0 4px;font-size:13.5px}
+.sheet .btn{align-self:stretch}
+@media(min-width:600px){.sheet .btn{align-self:flex-end;min-width:200px}}
+
+/* ---------- modal ---------- */
+#modal:empty{display:none}
+.modal-wrap{position:fixed;inset:0;z-index:60;background:rgba(4,6,14,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(100%,440px);background:var(--panel);border-radius:26px;padding:28px 24px 24px;text-align:center;box-shadow:inset 0 0 0 1.5px var(--line),0 30px 80px rgba(0,0,0,.5);animation:popIn .4s cubic-bezier(.2,1.5,.4,1);max-height:92vh;overflow:auto}
+@keyframes popIn{from{transform:scale(.85) translateY(20px);opacity:0}}
+.modal h2{font-size:26px;font-weight:900;margin:6px 0 8px}
+.modal p{color:var(--muted);line-height:1.55}
+.m-ico{width:84px;height:84px;margin:0 auto 6px;border-radius:24px;display:grid;place-items:center;font-size:42px;background:var(--tc);box-shadow:0 7px 0 var(--td)}
+.m-tier{font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--tc);margin-top:14px}
+.brief{text-align:left;background:var(--panel2);border-radius:16px;padding:14px 16px;margin:14px 0;color:#c9d1ea!important;font-size:15px;box-shadow:inset 0 0 0 1px var(--line)}
+.m-meta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:6px}
+.m-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.m-btns .btn{flex:1;min-width:120px}
+.r-title{font-size:30px;font-weight:900;background:linear-gradient(180deg,#fff,var(--js));-webkit-background-clip:text;background-clip:text;color:transparent}
+.r-stars{display:flex;justify-content:center;gap:6px;margin:16px 0 6px}
+.rs{font-size:64px;line-height:1;color:#263052;display:inline-block;transform:scale(.6);transition:transform .2s}
+.rs:nth-child(2){font-size:80px;margin-top:-14px}
+.rs.on{color:var(--js);text-shadow:0 0 30px rgba(247,223,30,.6),0 5px 0 var(--jsd);animation:starPop .5s cubic-bezier(.2,1.8,.4,1) forwards}
+.rs.off{transform:scale(.85)}
+@keyframes starPop{0%{transform:scale(.2) rotate(-40deg)}100%{transform:scale(1) rotate(0)}}
+.r-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:16px}
+.r-stats div{background:var(--panel2);border-radius:14px;padding:12px 8px;box-shadow:inset 0 0 0 1px var(--line)}
+.r-stats b{display:block;font-size:22px;font-weight:900;color:var(--js)}
+.r-stats span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.unlock{margin-top:14px;padding:12px;border-radius:14px;background:rgba(61,220,151,.1);box-shadow:inset 0 0 0 1.5px var(--good);color:var(--good);font-weight:800;animation:popIn .5s cubic-bezier(.2,1.5,.4,1)}
+.f-ico{font-size:64px;animation:popIn .5s}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:14px;background:var(--panel2);margin-top:10px;box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;border:0;width:100%;font-weight:800;font-size:16px}
+.sw{width:48px;height:28px;border-radius:99px;background:#2b3352;position:relative;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s cubic-bezier(.3,1.5,.5,1)}
+.toggle.on .sw{background:var(--good)}
+.toggle.on .sw::after{transform:translateX(20px)}
+
+/* ---------- certificate ---------- */
+.cert-wrap{max-width:900px;margin:0 auto;padding:24px 16px 60px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.cert-wrap h1{font-size:clamp(28px,6vw,40px);font-weight:900}
+.cert-wrap>p{color:var(--muted)}
+.name-input{width:min(100%,460px);padding:16px 18px;border-radius:16px;border:0;background:var(--panel2);box-shadow:inset 0 0 0 2px var(--line);color:var(--text);font:700 20px var(--round);text-align:center;outline:none}
+.name-input:focus{box-shadow:inset 0 0 0 2px var(--js)}
+.cert-frame{width:100%;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);animation:popIn .6s cubic-bezier(.2,1.3,.4,1)}
+.cert-frame canvas{display:block;width:100%;height:auto}
+.locked-cert{max-width:480px;margin:40px auto;text-align:center;padding:0 20px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.ring{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--js) calc(var(--p)*1%),var(--line2) 0);display:grid;place-items:center}
+.ring div{width:120px;height:120px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:44px}
+.tier-list{width:100%;display:grid;gap:8px;margin-top:6px}
+.tier-list div{display:flex;justify-content:space-between;padding:12px 16px;border-radius:14px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);font-weight:800}
+.tier-list span{color:var(--muted)}
+.tier-list .done span{color:var(--good)}
+
+/* ---------- toast / float ---------- */
+#toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;width:max-content;max-width:90vw}
+.toast{background:#1b2440;box-shadow:inset 0 0 0 1.5px var(--line),0 10px 30px rgba(0,0,0,.4);padding:11px 16px;border-radius:14px;font-weight:800;font-size:14px;animation:toastIn .3s cubic-bezier(.2,1.4,.4,1)}
+.toast.out{animation:toastOut .3s forwards}
+@keyframes toastIn{from{transform:translateY(20px) scale(.9);opacity:0}}
+@keyframes toastOut{to{transform:translateY(-10px);opacity:0}}
+.float{position:fixed;z-index:85;font-weight:900;font-size:22px;color:var(--js);text-shadow:0 2px 0 #6b5c00,0 0 20px rgba(247,223,30,.6);pointer-events:none;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{0%{transform:translate(-50%,0) scale(.6);opacity:0}20%{transform:translate(-50%,-14px) scale(1.15);opacity:1}100%{transform:translate(-50%,-70px) scale(1);opacity:0}}
+
+@media(max-width:600px){
+  .node-wrap{--k:.62}
+  .task-q{font-size:18px}
+  pre.code{font-size:14px;padding:14px}
+  .editor pre,.editor textarea{font-size:16px}
+  .editor{height:240px}
+  .card{padding:18px 16px}
+  .tier-head p{display:none}
+  .actions-in .btn:last-child{min-width:0;flex:1}
+  .actions-in .lbl{display:none}
+  .actions-in .btn{padding-left:14px;padding-right:14px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+<div id="toast"></div>
+<canvas id="fx"></canvas>
+<script>
+'use strict';
+/* =====================================================================
+   DATA — tiers & levels
+   ===================================================================== */
+const TIERS = [
+{"name":"Новичок","icon":"🌱","c":"#3ddc97","d":"#1f9e68","desc":"Переменные, типы, операторы и условия"},
+{"name":"Ученик","icon":"⚙️","c":"#4cc9f0","d":"#1f7c99","desc":"Массивы, циклы, функции и объекты"},
+{"name":"Адепт","icon":"🔮","c":"#b388ff","d":"#7546c9","desc":"Функции высшего порядка, замыкания и классы"},
+{"name":"Эксперт","icon":"🔥","c":"#ff8c42","d":"#b85718","desc":"Асинхронность, приведение типов, прототипы и рекурсия"}
+];
+
+const LEVELS = [
+{"tier":0,"icon":"📦","title":"Переменные и типы","brief":"Переменные — это подписанные коробки для значений. Используйте `const` для значений, которые не будут переприсваиваться, и `let` — для тех, что будут меняться. У каждого значения есть тип: string, number, boolean, null, undefined, object…","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"let x = 5;\nx = x + 2;\nconsole.log(x);","opts":["7","5","52","Ошибка"],"exp":"`let` создаёт переменную, которую можно переприсвоить. Сначала вычисляется правая часть `x + 2` (7), затем результат записывается обратно в `x`.","hint":"Сначала выполняется правая часть от `=`, потом результат сохраняется."},{"type":"fill","q":"Объявите значение, которое нельзя переприсвоить.","code":"___ PI = 3.14159;\nPI = 3; // ❌ TypeError!","answers":["const"],"exp":"`const` создаёт привязку, которую нельзя переприсвоить. Используйте его по умолчанию, а `let` — только когда значение должно меняться.","hint":"Пять букв, сокращение от «constant»."},{"type":"quiz","q":"Что выведет этот код?","code":"console.log(typeof \"42\");","opts":["\"string\"","\"number\"","\"text\"","\"object\""],"exp":"Всё, что в кавычках, — строка, даже если похоже на число. `typeof` всегда возвращает строку с названием типа.","hint":"Посмотрите внимательно на кавычки вокруг 42."}]},
+{"tier":0,"icon":"➗","title":"Операторы и функции","brief":"Арифметические операторы (`+ - * / %`) подчиняются математическому порядку действий. Функции упаковывают логику для повторного использования: принимают параметры и возвращают результат через `return`.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"console.log(10 % 3);","opts":["1","3","3.33","0"],"exp":"`%` — оператор остатка от деления. 10 ÷ 3 = 3, остаток 1.","hint":"Подумайте, что «остаётся» после деления."},{"type":"quiz","q":"Что будет выведено?","code":"console.log(2 + 3 * 4);","opts":["14","20","24","9"],"exp":"Умножение выполняется раньше сложения, поэтому сначала `3 * 4`: 2 + 12 = 14.","hint":"Вспомните порядок действий из школьной математики."},{"type":"code","q":"Напишите функцию `double(n)`, которая возвращает `n`, умноженное на 2.","fn":"double(n)","starter":"function double(n) {\n  // ваш код здесь\n}","tests":[{"e":"double(2)","v":4},{"e":"double(0)","v":0},{"e":"double(-5)","v":-10},{"e":"double(1.5)","v":3}],"solution":"function double(n) {\n  return n * 2;\n}","exp":"`return` возвращает значение тому, кто вызвал функцию. Без него функция возвращает `undefined`.","hint":"Используйте ключевое слово `return` и выражение `n * 2`."}]},
+{"tier":0,"icon":"🔤","title":"Строки","brief":"Строки — это текст в кавычках. `+` склеивает строки, `.length` считает символы, а шаблонные строки (обратные кавычки) встраивают значения через `${…}`.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"console.log(\"5\" + 3);","opts":["\"53\"","8","NaN","Ошибка"],"exp":"Если с одной из сторон `+` стоит строка, он склеивает (конкатенирует), а не складывает. 3 превращается в \"3\", получается \"53\".","hint":"У `+` две работы: складывать числа и склеивать строки."},{"type":"fill","q":"Получите количество символов в строке.","code":"const word = \"hello\";\nconsole.log(word.___); // 5","answers":["length"],"exp":"`.length` — это свойство (без скобок), в котором хранится число символов строки. У массивов оно тоже есть!","hint":"Это свойство, а не метод — без `()`."},{"type":"code","q":"Напишите `greet(name)`, которая возвращает приветствие, например `greet(\"Ада\")` → `\"Привет, Ада!\"`","fn":"greet(name)","starter":"function greet(name) {\n  \n}","tests":[{"e":"greet(\"Ада\")","v":"Привет, Ада!"},{"e":"greet(\"JS\")","v":"Привет, JS!"},{"e":"greet(\"мир\")","v":"Привет, мир!"}],"solution":"function greet(name) {\n  return `Привет, ${name}!`;\n}","exp":"Шаблонные строки используют обратные кавычки и подстановки `${…}`. Вариант `\"Привет, \" + name + \"!\"` тоже работает.","hint":"Склейте \"Привет, \" + name + \"!\" — не забудьте запятую, пробел и восклицательный знак."}]},
+{"tier":0,"icon":"🔀","title":"Условия","brief":"`if` / `else` позволяет коду принимать решения. Для сравнения используйте строгое равенство (`===`) — оно проверяет и значение, и тип.","tasks":[{"type":"quiz","q":"Что будет выведено (по порядку)?","code":"console.log(5 === \"5\");\nconsole.log(5 == \"5\");","opts":["false, затем true","true, затем true","false, затем false","true, затем false"],"exp":"`===` сравнивает значение И тип: число и строка → false. `==` сначала приводит типы, \"5\" становится 5 → true. Предпочитайте `===`.","hint":"Один из операторов проверяет тип, другой — нет."},{"type":"code","q":"Напишите `isEven(n)`, которая возвращает `true`, если `n` чётное, и `false` в остальных случаях.","fn":"isEven(n)","starter":"function isEven(n) {\n  \n}","tests":[{"e":"isEven(4)","v":true},{"e":"isEven(7)","v":false},{"e":"isEven(0)","v":true},{"e":"isEven(-3)","v":false}],"solution":"function isEven(n) {\n  return n % 2 === 0;\n}","exp":"Число чётное, если при делении на 2 нет остатка: `n % 2 === 0`. Сравнение уже даёт true/false, его можно вернуть напрямую.","hint":"Используйте оператор `%` из прошлого уровня."},{"type":"order","q":"Расставьте строки так, чтобы взрослые (18+) видели \"Взрослый\", а все остальные — \"Несовершеннолетний\".","lines":["const age = 20;","if (age >= 18) {","  console.log(\"Взрослый\");","} else {","  console.log(\"Несовершеннолетний\");","}"],"exp":"Объявляйте переменные до использования. Блок `if` выполняется, когда условие истинно; `else` ловит все остальные случаи.","hint":"Начните с переменной, затем `if`."}]},
+{"tier":0,"icon":"👑","title":"Испытание новичка","boss":true,"time":180,"brief":"Всё из ранга «Новичок» — на время. Читайте внимательно и остерегайтесь причуд типов!","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const a = \"3\";\nconst b = 4;\nconsole.log(a * b);","opts":["12","\"34\"","NaN","\"12\""],"exp":"В отличие от `+`, оператор `*` умеет только считать, поэтому превращает \"3\" в число 3. Результат: 12 (число).","hint":"У `*` нет режима склеивания строк."},{"type":"quiz","q":"Что будет выведено?","code":"console.log(typeof null);","opts":["\"object\"","\"null\"","\"undefined\"","null"],"exp":"Знаменитая ошибка 1995 года, которую нельзя исправить, не сломав веб: `typeof null` — это \"object\". Проверяйте null через `value === null`.","hint":"Это историческая причуда языка."},{"type":"code","q":"Напишите `max3(a, b, c)`, которая возвращает наибольшее из трёх чисел.","fn":"max3(a, b, c)","starter":"function max3(a, b, c) {\n  \n}","tests":[{"e":"max3(1, 5, 3)","v":5},{"e":"max3(9, 2, 4)","v":9},{"e":"max3(-1, -7, -3)","v":-1},{"e":"max3(2, 2, 8)","v":8}],"solution":"function max3(a, b, c) {\n  return Math.max(a, b, c);\n}","exp":"`Math.max` принимает любое количество аргументов. Можно также сравнить через цепочку `if` / `else`.","hint":"У встроенного объекта `Math` есть подходящий метод."},{"type":"fill","q":"Вызовите `pass()`, когда score равен 50 **или больше**.","code":"if (score ___ 50) {\n  pass();\n}","answers":[">="],"exp":"`>=` означает «больше или равно». С одним `>` результат ровно 50 не прошёл бы.","hint":"Два символа: знак сравнения плюс знак равенства."}]},
+{"tier":1,"icon":"🧺","title":"Массивы","brief":"Массивы — упорядоченные списки с индексами от 0. `push` добавляет элемент в конец, а `length` показывает количество элементов.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const arr = [10, 20, 30];\nconsole.log(arr[1]);","opts":["20","10","30","undefined"],"exp":"Индексы массивов начинаются с нуля: `arr[0]` — это 10, `arr[1]` — 20.","hint":"Счёт начинается с 0."},{"type":"fill","q":"Добавьте `3` в конец массива.","code":"const nums = [1, 2];\nnums.___(3);\nconsole.log(nums); // [1, 2, 3]","answers":["push"],"exp":"`push` добавляет элементы в конец массива (и возвращает новую длину). `unshift` добавляет в начало.","hint":"Четыре буквы. Так «заталкивают» элементы в стек."},{"type":"code","q":"Напишите `last(arr)`, которая возвращает последний элемент массива (или `undefined`, если он пуст).","fn":"last(arr)","starter":"function last(arr) {\n  \n}","tests":[{"e":"last([1, 2, 3])","v":3},{"e":"last([\"a\"])","v":"a"},{"e":"last([])","v":undefined}],"solution":"function last(arr) {\n  return arr[arr.length - 1];\n}","exp":"Последний индекс всегда `length - 1`. В современном JS есть и `arr.at(-1)`.","hint":"Если в массиве 3 элемента, какой индекс у последнего?"}]},
+{"tier":1,"icon":"🔁","title":"Циклы","brief":"Циклы повторяют работу. У цикла `for` три части — начало; условие; шаг. Цикл `while` работает, пока условие истинно.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"let sum = 0;\nfor (let i = 1; i <= 4; i++) {\n  sum += i;\n}\nconsole.log(sum);","opts":["10","6","15","4"],"exp":"`i` принимает значения 1, 2, 3, 4 (обратите внимание на `<=`). 1 + 2 + 3 + 4 = 10.","hint":"Выпишите все значения `i` и сложите их."},{"type":"quiz","q":"Сколько раз будет выведено \"hi\"?","code":"for (let i = 0; i < 10; i += 3) {\n  console.log(\"hi\");\n}","opts":["4","3","10","9"],"exp":"`i` принимает 0, 3, 6, 9 — четыре значения меньше 10. Следующее было бы 12, и условие уже не выполнится.","hint":"Выпишите значения `i`."},{"type":"code","q":"Напишите `sumTo(n)`, которая возвращает 1 + 2 + … + n (и 0, если n равно 0).","fn":"sumTo(n)","starter":"function sumTo(n) {\n  let total = 0;\n  \n  return total;\n}","tests":[{"e":"sumTo(1)","v":1},{"e":"sumTo(5)","v":15},{"e":"sumTo(100)","v":5050},{"e":"sumTo(0)","v":0}],"solution":"function sumTo(n) {\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    total += i;\n  }\n  return total;\n}","exp":"Пройдите циклом от 1 до n, прибавляя каждое число к сумме. (Для любителей математики: `n * (n + 1) / 2` тоже работает!)","hint":"`for (let i = 1; i <= n; i++) { total += i; }`"}]},
+{"tier":1,"icon":"🧩","title":"Функции подробнее","brief":"У функций бывают параметры по умолчанию, а стрелочные функции (`=>`) дают компактный синтаксис для небольших помощников.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"function area(w, h = 2) {\n  return w * h;\n}\nconsole.log(area(5));","opts":["10","NaN","5","undefined"],"exp":"`h = 2` — параметр по умолчанию: он используется, когда аргумент не передан. 5 × 2 = 10.","hint":"Какое значение получает `h`, если его не передали?"},{"type":"fill","q":"Допишите стрелочную функцию.","code":"const square = (x) ___ x * x;\nconsole.log(square(4)); // 16","answers":["=>"],"exp":"Стрелочные функции используют `=>`. Если тело — одно выражение, значение возвращается автоматически: не нужны ни `return`, ни фигурные скобки.","hint":"Похоже на стрелку: знак равенства + «больше»."},{"type":"code","q":"Напишите `countVowels(str)`, которая считает латинские гласные a, e, i, o, u (в любом регистре).","fn":"countVowels(str)","starter":"function countVowels(str) {\n  \n}","tests":[{"e":"countVowels(\"hello\")","v":2},{"e":"countVowels(\"JAVASCRIPT\")","v":3},{"e":"countVowels(\"rhythm\")","v":0},{"e":"countVowels(\"\")","v":0}],"solution":"function countVowels(str) {\n  let count = 0;\n  for (const ch of str.toLowerCase()) {\n    if (\"aeiou\".includes(ch)) count++;\n  }\n  return count;\n}","exp":"Приведите регистр через `toLowerCase()`, переберите символы через `for…of` и проверьте вхождение через `includes`. Регулярное выражение тоже подойдёт: `(str.match(/[aeiou]/gi) || []).length`.","hint":"`\"aeiou\".includes(ch)` подскажет, гласная ли это."}]},
+{"tier":1,"icon":"🗂️","title":"Объекты","brief":"Объекты хранят пары ключ → значение. Обращайтесь к значениям через точку или квадратные скобки, а ключи перебирайте через `for…in` или `Object.keys`.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const user = { name: \"Ada\" };\nuser.age = 36;\nconsole.log(Object.keys(user).length);","opts":["2","1","undefined","TypeError"],"exp":"`const` запрещает переприсваивать `user`, но сам объект изменять можно. После добавления `age` у него 2 ключа.","hint":"`const` ≠ неизменяемость."},{"type":"fill","q":"Переберите все ключи объекта.","code":"const scores = { ana: 9, bo: 7 };\nfor (const key ___ scores) {\n  console.log(key, scores[key]);\n}","answers":["in"],"exp":"`for…in` перебирает ключи объекта. `for…of` перебирает значения итерируемых объектов вроде массивов — а обычные объекты не итерируемы!","hint":"Две буквы. Не `of`!"},{"type":"code","q":"Напишите `invert(obj)`, которая меняет местами ключи и значения: `{a: \"x\"}` → `{x: \"a\"}`.","fn":"invert(obj)","starter":"function invert(obj) {\n  const result = {};\n  \n  return result;\n}","tests":[{"e":"invert({ a: \"x\", b: \"y\" })","v":{"x":"a","y":"b"}},{"e":"invert({})","v":{}},{"e":"invert({ one: \"1\" })","v":{"1":"one"}}],"solution":"function invert(obj) {\n  const result = {};\n  for (const key in obj) {\n    result[obj[key]] = key;\n  }\n  return result;\n}","exp":"Переберите ключи и используйте значение как новый ключ через квадратные скобки: `result[obj[key]] = key`. Однострочник: `Object.fromEntries(Object.entries(obj).map(([k, v]) => [v, k]))`.","hint":"Квадратные скобки позволяют использовать переменную как ключ: `result[value] = key`."}]},
+{"tier":1,"icon":"👑","title":"Испытание ученика","boss":true,"time":240,"brief":"Массивы, циклы, функции и объекты сталкиваются. Помните: объекты и массивы передаются по ссылке!","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const a = [1, 2, 3];\nconst b = a;\nb.push(4);\nconsole.log(a.length);","opts":["4","3","undefined","Ошибка"],"exp":"Массивы — это объекты, и хранятся они по ссылке. `b = a` копирует ссылку, а не массив: оба имени указывают на один список. Для настоящей копии используйте `[...a]`.","hint":"`b` — это копия или другое имя для того же самого?"},{"type":"order","q":"Соберите из строк рабочую функцию `findMax`.","lines":["function findMax(arr) {","  let max = arr[0];","  for (const n of arr) {","    if (n > max) max = n;","  }","  return max;","}"],"exp":"Начните с кандидата (`arr[0]`), сравните его с каждым элементом, оставьте больший и верните результат после окончания цикла.","hint":"`return` должен идти после закрытия цикла."},{"type":"code","q":"Напишите `fizzBuzz(n)`: верните \"Fizz\" для кратных 3, \"Buzz\" для кратных 5, \"FizzBuzz\" для кратных обоим, иначе — число в виде строки.","fn":"fizzBuzz(n)","starter":"function fizzBuzz(n) {\n  \n}","tests":[{"e":"fizzBuzz(3)","v":"Fizz"},{"e":"fizzBuzz(10)","v":"Buzz"},{"e":"fizzBuzz(15)","v":"FizzBuzz"},{"e":"fizzBuzz(7)","v":"7"},{"e":"fizzBuzz(30)","v":"FizzBuzz"}],"solution":"function fizzBuzz(n) {\n  if (n % 15 === 0) return \"FizzBuzz\";\n  if (n % 3 === 0) return \"Fizz\";\n  if (n % 5 === 0) return \"Buzz\";\n  return String(n);\n}","exp":"Сначала проверяйте самый специфичный случай (кратность 15) — иначе для 15 раньше вернётся \"Fizz\". `String(n)` превращает число в строку.","hint":"Порядок важен: проверьте 15 раньше 3 и 5."},{"type":"quiz","q":"Что будет выведено?","code":"console.log([1, 2, 3].includes(\"2\"));","opts":["false","true","1","undefined"],"exp":"`includes` использует строгое сравнение: строка \"2\" — это не число 2.","hint":"Сравните типы элементов и искомого значения."}]},
+{"tier":2,"icon":"⚡","title":"Map, filter, reduce","brief":"`map` преобразует, `filter` отбирает, `reduce` сводит к одному значению. Они возвращают новые значения, а не изменяют старые, — это сердце функционального JS.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const out = [1, 2, 3].map(x => x * 2);\nconsole.log(out);","opts":["[2, 4, 6]","[1, 2, 3]","12","[2, 4, 6, 8]"],"exp":"`map` создаёт НОВЫЙ массив, преобразуя каждый элемент. Исходный массив не меняется.","hint":"Один выходной элемент на каждый входной."},{"type":"fill","q":"Оставьте только чётные числа.","code":"const nums = [1, 2, 3, 4, 5, 6];\nconst evens = nums.___(n => n % 2 === 0);\n// [2, 4, 6]","answers":["filter"],"exp":"`filter` оставляет элементы, для которых колбэк вернул true, и создаёт новый (возможно, более короткий) массив.","hint":"Вы отфильтровываете нечётные…"},{"type":"code","q":"Напишите `total(prices)`, которая возвращает сумму чисел массива (0 для пустого массива). Попробуйте `reduce`!","fn":"total(prices)","starter":"function total(prices) {\n  \n}","tests":[{"e":"total([1, 2, 3])","v":6},{"e":"total([])","v":0},{"e":"total([10.5, 4.5])","v":15}],"solution":"function total(prices) {\n  return prices.reduce((sum, p) => sum + p, 0);\n}","exp":"`reduce((acc, x) => acc + x, 0)` сворачивает массив в одно значение. Всегда передавайте начальное значение (`0`) — без него `reduce` на пустом массиве выбросит ошибку!","hint":"`prices.reduce((sum, p) => sum + p, 0)`"}]},
+{"tier":2,"icon":"🔐","title":"Области видимости и замыкания","brief":"Замыкание — это функция, которая помнит переменные из места, где была создана. У `let` блочная область видимости, у `var` — функциональная.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"function counter() {\n  let c = 0;\n  return () => ++c;\n}\nconst next = counter();\nnext();\nnext();\nconsole.log(next());","opts":["3","1","2","0"],"exp":"Стрелочная функция замыкает `c`, и переменная живёт между вызовами. Каждый вызов увеличивает тот же `c`: 1, 2, затем 3.","hint":"`c` не сбрасывается между вызовами `next`."},{"type":"quiz","q":"Что будет выведено?","code":"for (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0);\n}","opts":["3 3 3","0 1 2","2 2 2","0 0 0"],"exp":"У `var` функциональная область видимости, поэтому все три колбэка разделяют ОДНУ `i`. Когда они выполняются, цикл уже закончился и `i` равна 3. С `let` получится 0 1 2 — `let` создаёт новую привязку на каждой итерации.","hint":"Когда на самом деле выполняются колбэки — и чему тогда равна `i`?"},{"type":"code","q":"Напишите `makeMultiplier(n)`, которая возвращает функцию, умножающую свой аргумент на `n`.","fn":"makeMultiplier(n)","starter":"function makeMultiplier(n) {\n  \n}","tests":[{"e":"makeMultiplier(3)(4)","v":12},{"e":"makeMultiplier(10)(-2)","v":-20},{"t":"const dbl = makeMultiplier(2); [dbl(1), dbl(5)]","e":"(() => { const dbl = makeMultiplier(2); return [dbl(1), dbl(5)]; })()","v":[2,10]}],"solution":"function makeMultiplier(n) {\n  return (x) => x * n;\n}","exp":"Возвращаемая функция «замыкает» `n` и помнит его даже после завершения `makeMultiplier`. Это фабрика функций.","hint":"Верните функцию: `return (x) => …`"}]},
+{"tier":2,"icon":"🎁","title":"Деструктуризация и spread","brief":"Деструктуризация распаковывает массивы и объекты в переменные. Spread (`...`) копирует или объединяет их одним движением.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const [a, , b] = [1, 2, 3];\nconsole.log(a + b);","opts":["4","3","6","NaN"],"exp":"Пустая позиция пропускает второй элемент: `a = 1`, `b = 3`, значит 1 + 3 = 4.","hint":"Обратите внимание на пустое место между запятыми."},{"type":"quiz","q":"Что будет выведено?","code":"const o = { x: 1, y: 2 };\nconst p = { ...o, y: 5 };\nconsole.log(p.y, o.y);","opts":["5 2","5 5","2 5","2 2"],"exp":"Spread копирует `o` в новый объект, затем `y: 5` перезаписывает значение только в копии. Исходный `o` не меняется.","hint":"Последующие свойства побеждают; spread делает копию."},{"type":"code","q":"Напишите `merge(a, b)`, которая объединяет два массива без дубликатов, сохраняя порядок первого появления.","fn":"merge(a, b)","starter":"function merge(a, b) {\n  \n}","tests":[{"e":"merge([1, 2], [2, 3])","v":[1,2,3]},{"e":"merge([], [])","v":[]},{"e":"merge([\"a\", \"b\"], [\"b\", \"a\", \"c\"])","v":["a","b","c"]}],"solution":"function merge(a, b) {\n  return [...new Set([...a, ...b])];\n}","exp":"Разверните оба массива в один, передайте его в `Set` (он убирает дубликаты и сохраняет порядок вставки), затем разверните Set обратно в массив.","hint":"`Set` автоматически удаляет дубликаты."}]},
+{"tier":2,"icon":"🏛️","title":"Классы и this","brief":"Классы — это чертежи объектов. `constructor` выполняется при `new`, а методы обращаются к экземпляру через `this`.","tasks":[{"type":"order","q":"Соберите из строк корректный класс `Dog`.","lines":["class Dog {","  constructor(name) {","    this.name = name;","  }","  speak() {","    return this.name + \" лает\";","  }","}"],"exp":"Тело класса содержит `constructor` и методы. `this.name = name` сохраняет данные в новом экземпляре, чтобы методы могли использовать их позже.","hint":"Конструктор обычно идёт первым."},{"type":"quiz","q":"Что будет выведено?","code":"class Counter {\n  count = 0;\n  inc() {\n    this.count++;\n    return this;\n  }\n}\nconst c = new Counter();\nc.inc().inc().inc();\nconsole.log(c.count);","opts":["3","1","undefined","TypeError"],"exp":"Каждый `inc()` возвращает `this` (тот же экземпляр), поэтому вызовы можно объединять в цепочку. Три вызова → `count` равен 3.","hint":"Что возвращает `inc`?"},{"type":"code","q":"Допишите класс `Stack`: `push(x)`, `pop()` (удаляет и возвращает верхний элемент), `peek()` (возвращает верхний элемент) и геттер `size`.","fn":"class Stack","starter":"class Stack {\n  constructor() {\n    this.items = [];\n  }\n  push(x) {\n    \n  }\n  pop() {\n    \n  }\n  peek() {\n    \n  }\n  get size() {\n    \n  }\n}","tests":[{"t":"s.push(1); s.push(2); s.pop()","e":"(() => { const s = new Stack(); s.push(1); s.push(2); return s.pop(); })()","v":2},{"t":"s.push(\"a\"); s.push(\"b\"); s.peek()","e":"(() => { const s = new Stack(); s.push(\"a\"); s.push(\"b\"); return s.peek(); })()","v":"b"},{"t":"s.push(1); s.push(2); s.pop(); s.size","e":"(() => { const s = new Stack(); s.push(1); s.push(2); s.pop(); return s.size; })()","v":1},{"t":"new Stack().pop()","e":"new Stack().pop()","v":undefined}],"solution":"class Stack {\n  constructor() {\n    this.items = [];\n  }\n  push(x) {\n    this.items.push(x);\n  }\n  pop() {\n    return this.items.pop();\n  }\n  peek() {\n    return this.items[this.items.length - 1];\n  }\n  get size() {\n    return this.items.length;\n  }\n}","exp":"Каждый метод делегирует работу внутреннему массиву через `this.items`. Аксессор `get` позволяет читать `s.size` как свойство, без скобок.","hint":"Используйте `this.items.push`, `this.items.pop` и `this.items.length`."}]},
+{"tier":2,"icon":"👑","title":"Решающая схватка адепта","boss":true,"time":300,"brief":"Функции высшего порядка, замыкания, классы и деструктуризация. Этот уровень кусается — сортируйте осторожно.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"console.log([3, 1, 10, 2].sort());","opts":["[1, 10, 2, 3]","[1, 2, 3, 10]","[10, 3, 2, 1]","[3, 1, 10, 2]"],"exp":"Без функции сравнения `sort` превращает элементы в строки и сортирует по алфавиту: \"10\" идёт раньше \"2\". Для чисел используйте `sort((a, b) => a - b)`.","hint":"Сортировка по умолчанию сравнивает элементы как строки."},{"type":"code","q":"Напишите `groupBy(arr, fn)`, которая группирует элементы в объект по ключу `fn(item)`.","fn":"groupBy(arr, fn)","starter":"function groupBy(arr, fn) {\n  const groups = {};\n  \n  return groups;\n}","tests":[{"e":"groupBy([1, 2, 3, 4], n => n % 2 === 0 ? \"even\" : \"odd\")","v":{"odd":[1,3],"even":[2,4]}},{"e":"groupBy([\"apple\", \"avocado\", \"banana\"], s => s[0])","v":{"a":["apple","avocado"],"b":["banana"]}},{"e":"groupBy([], x => x)","v":{}}],"solution":"function groupBy(arr, fn) {\n  const groups = {};\n  for (const item of arr) {\n    const key = fn(item);\n    (groups[key] ??= []).push(item);\n  }\n  return groups;\n}","exp":"Для каждого элемента вычислите ключ, создайте группу, если её нет, и добавьте элемент. `??=` присваивает, только если слева null или undefined. (В современном JS есть и `Object.groupBy`.)","hint":"`if (!groups[key]) groups[key] = [];`, затем push."},{"type":"fill","q":"Соберите все оставшиеся свойства в `rest`.","code":"const user = { name: \"Ada\", age: 36, lang: \"JS\" };\nconst { name, ___rest } = user;\n// rest → { age: 36, lang: \"JS\" }","answers":["..."],"exp":"В деструктуризации `...rest` собирает все оставшиеся свойства в новый объект. Те же три точки, что и у spread, — но работа обратная.","hint":"Три символа, как у spread."},{"type":"quiz","q":"Что будет выведено?","code":"let x = 1;\nfunction show() {\n  console.log(x);\n}\nfunction run() {\n  let x = 2;\n  show();\n}\nrun();","opts":["1","2","undefined","ReferenceError"],"exp":"В JavaScript лексическая область видимости: `show` видит переменные там, где она НАПИСАНА, а не там, где вызвана. Внешняя `x` равна 1.","hint":"Область видимости определяется местом объявления функции."}]},
+{"tier":3,"icon":"⏳","title":"Асинхронность и промисы","brief":"JavaScript однопоточный, но неблокирующий. Промисы представляют будущие значения, а `async`/`await` позволяет работать с ними как с обычным кодом.","tasks":[{"type":"quiz","q":"В каком порядке будут выведены буквы?","code":"console.log(\"A\");\nsetTimeout(() => console.log(\"B\"), 0);\nPromise.resolve().then(() => console.log(\"C\"));\nconsole.log(\"D\");","opts":["A D C B","A B C D","A C D B","A D B C"],"exp":"Сначала выполняется синхронный код (A, D). Затем очередь микрозадач (колбэки промисов → C) опустошается до следующей макрозадачи (setTimeout → B).","hint":"Колбэки промисов — микрозадачи, таймеры — макрозадачи."},{"type":"fill","q":"Дождитесь завершения запроса.","code":"async function getUser(url) {\n  const res = ___ fetch(url);\n  return res.json();\n}","answers":["await"],"exp":"`await` приостанавливает async-функцию до выполнения промиса и отдаёт его значение — не блокируя остальную страницу.","hint":"Работает только внутри `async`-функций."},{"type":"code","q":"Напишите `async sumAll(list)` — в `list` вперемешку промисы и обычные числа. Верните (через промис) их сумму.","fn":"async sumAll(list)","starter":"async function sumAll(list) {\n  \n}","tests":[{"e":"sumAll([Promise.resolve(1), 2, Promise.resolve(3)])","v":6},{"e":"sumAll([])","v":0},{"e":"sumAll([1]) instanceof Promise","v":true}],"solution":"async function sumAll(list) {\n  const values = await Promise.all(list);\n  return values.reduce((a, b) => a + b, 0);\n}","exp":"`Promise.all` ждёт каждый элемент (обычные значения считаются уже выполненными) и отдаёт массив результатов. `async`-функция всегда возвращает промис.","hint":"`await Promise.all(list)`, затем reduce."}]},
+{"tier":3,"icon":"🎭","title":"Приведение типов и равенство","brief":"JS автоматически преобразует типы самыми неожиданными способами. Знайте правила truthy/falsy и когда `==` отличается от `===`.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"const result = [] + [];\nconsole.log(JSON.stringify(result));","opts":["\"\"","\"[][]\"","0","[]"],"exp":"`+` с объектами приводит обе стороны к примитивам. Строковое представление пустого массива — \"\", поэтому \"\" + \"\" даёт пустую строку.","hint":"Что вернёт `String([])`?"},{"type":"quiz","q":"Что будет выведено?","code":"console.log(null == undefined, null === undefined);","opts":["true false","true true","false false","false true"],"exp":"`==` считает null и undefined равными друг другу (и больше ничему). `===` видит два разных типа, поэтому false.","hint":"У нестрогого равенства есть особое правило для этой пары."},{"type":"code","q":"Напишите `truthyCount(arr)`, которая возвращает количество truthy-элементов.","fn":"truthyCount(arr)","starter":"function truthyCount(arr) {\n  \n}","tests":[{"e":"truthyCount([0, 1, \"\", \"a\", null, [], {}])","v":4},{"e":"truthyCount([NaN, undefined, false])","v":0},{"e":"truthyCount([\"0\", \" \"])","v":2}],"solution":"function truthyCount(arr) {\n  return arr.filter(Boolean).length;\n}","exp":"Falsy-значения: `false, 0, -0, 0n, \"\", null, undefined, NaN`. Всё остальное — включая `[]`, `{}` и `\"0\"` — truthy. `filter(Boolean)` оставляет truthy-элементы.","hint":"Саму функцию `Boolean` можно передать в `filter`."}]},
+{"tier":3,"icon":"🧬","title":"Прототипы и ссылки","brief":"Объекты наследуют через прототипы. Поиск свойства идёт вверх по цепочке, пока не найдёт совпадение — или не упрётся в null.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"function Animal() {}\nAnimal.prototype.legs = 4;\nconst cat = new Animal();\ncat.legs = 3;\ndelete cat.legs;\nconsole.log(cat.legs);","opts":["4","3","undefined","Ошибка"],"exp":"`cat.legs = 3` создаёт СОБСТВЕННОЕ свойство, которое затеняет свойство прототипа. После удаления снова видно унаследованное `legs` (4).","hint":"`delete` удаляет только собственное свойство объекта."},{"type":"quiz","q":"Что будет выведено?","code":"const cfg = Object.freeze({ db: { port: 1 } });\ncfg.db.port = 2;\nconsole.log(cfg.db.port);","opts":["2","1","TypeError","undefined"],"exp":"`Object.freeze` замораживает поверхностно. Сам `cfg` заморожен, но `cfg.db` — отдельный, незамороженный объект, поэтому его `port` становится 2.","hint":"Распространяется ли заморозка на вложенные объекты?"},{"type":"code","q":"Напишите `deepClone(value)`, которая копирует вложенные объекты и массивы, чтобы изменение копии никогда не затрагивало оригинал.","fn":"deepClone(value)","starter":"function deepClone(value) {\n  \n}","tests":[{"e":"deepClone({ a: [1, { b: 2 }] })","v":{"a":[1,{"b":2}]}},{"t":"const a = { x: { y: [1, 2] } }; deepClone(a).x.y.push(3); a.x.y.length","e":"(() => { const a = { x: { y: [1, 2] } }; deepClone(a).x.y.push(3); return a.x.y.length; })()","v":2},{"t":"const a = { n: { m: 1 } }; deepClone(a).n !== a.n","e":"(() => { const a = { n: { m: 1 } }; return deepClone(a).n !== a.n; })()","v":true},{"e":"deepClone(42)","v":42}],"solution":"function deepClone(value) {\n  if (value === null || typeof value !== \"object\") return value;\n  if (Array.isArray(value)) return value.map(deepClone);\n  const copy = {};\n  for (const key in value) copy[key] = deepClone(value[key]);\n  return copy;\n}","exp":"Примитивы возвращаются как есть; массивы и объекты пересобираются рекурсивно. В браузерах также есть встроенный `structuredClone(value)`.","hint":"Рекурсия: если это не объект — верните его; иначе клонируйте каждое свойство."}]},
+{"tier":3,"icon":"🌀","title":"Рекурсия и алгоритмы","brief":"Рекурсия решает задачу через решение её уменьшенных копий. Всегда задавайте базовый случай, чтобы остановиться!","tasks":[{"type":"code","q":"Напишите `flatten(arr)`, которая превращает массив любой вложенности в один плоский массив.","fn":"flatten(arr)","starter":"function flatten(arr) {\n  \n}","tests":[{"e":"flatten([1, [2, [3, [4]]]])","v":[1,2,3,4]},{"e":"flatten([])","v":[]},{"e":"flatten([[[\"a\"]], \"b\"])","v":["a","b"]}],"solution":"function flatten(arr) {\n  return arr.reduce(\n    (out, x) => out.concat(Array.isArray(x) ? flatten(x) : x),\n    []\n  );\n}","exp":"Для каждого элемента: если это массив — рекурсивно «сплющите» его, иначе оставьте как есть. Встроенный `arr.flat(Infinity)` делает то же самое.","hint":"`Array.isArray(x) ? flatten(x) : x`"},{"type":"quiz","q":"Что будет выведено?","code":"function f(n) {\n  return n <= 1 ? n : f(n - 1) + f(n - 2);\n}\nconsole.log(f(7));","opts":["13","8","21","7"],"exp":"Это числа Фибоначчи: 0, 1, 1, 2, 3, 5, 8, 13 — значит, f(7) = 13.","hint":"Каждое значение — сумма двух предыдущих, начиная с 0, 1."},{"type":"code","q":"Напишите `isPalindrome(str)` — игнорируйте регистр, пробелы и знаки препинания (строки на латинице).","fn":"isPalindrome(str)","starter":"function isPalindrome(str) {\n  \n}","tests":[{"e":"isPalindrome(\"Racecar\")","v":true},{"e":"isPalindrome(\"A man, a plan, a canal: Panama\")","v":true},{"e":"isPalindrome(\"hello\")","v":false}],"solution":"function isPalindrome(str) {\n  const s = str.toLowerCase().replace(/[^a-z0-9]/g, \"\");\n  return s === [...s].reverse().join(\"\");\n}","exp":"Сначала нормализуйте строку (нижний регистр, только буквы и цифры), затем сравните её с перевёрнутой.","hint":"`str.toLowerCase().replace(/[^a-z0-9]/g, \"\")` очищает ввод."}]},
+{"tier":3,"icon":"🐉","title":"Финальный босс","boss":true,"time":480,"brief":"Последнее испытание: генераторы, промисы, мемоизация и не только. Пять заданий отделяют вас от сертификата.","tasks":[{"type":"quiz","q":"Что будет выведено?","code":"function* gen() {\n  yield 1;\n  yield 2;\n  return 3;\n}\nconsole.log([...gen()]);","opts":["[1, 2]","[1, 2, 3]","[3]","[]"],"exp":"Spread собирает только значения из `yield`. `return` генератора помечает его как `done: true`, поэтому перебор это значение игнорирует.","hint":"Перебор останавливается, когда `done` становится true."},{"type":"quiz","q":"В каком порядке будут выведены числа?","code":"const p = new Promise(resolve => {\n  console.log(1);\n  resolve(2);\n  console.log(3);\n});\np.then(v => console.log(v));\nconsole.log(4);","opts":["1 3 4 2","1 2 3 4","1 4 3 2","4 1 3 2"],"exp":"Функция-исполнитель выполняется синхронно (1, 3). `resolve` её не останавливает. Колбэки `.then` всегда асинхронны, поэтому 4 выводится раньше 2.","hint":"Функция, переданная в `new Promise`, выполняется сразу."},{"type":"code","q":"Напишите `memoize(fn)` — верните версию функции одного аргумента `fn`, которая кэширует результаты и никогда не пересчитывает один и тот же ввод.","fn":"memoize(fn)","starter":"function memoize(fn) {\n  \n}","tests":[{"t":"let calls = 0; const sq = memoize(n => (calls++, n * n)); sq(4); sq(4); sq(5); calls","e":"(() => { let calls = 0; const sq = memoize(n => (calls++, n * n)); sq(4); sq(4); sq(5); return calls; })()","v":2},{"e":"memoize(n => n + 1)(1)","v":2},{"t":"const m = memoize(n => n * 10); [m(2), m(2)]","e":"(() => { const m = memoize(n => n * 10); return [m(2), m(2)]; })()","v":[20,20]}],"solution":"function memoize(fn) {\n  const cache = new Map();\n  return (arg) => {\n    if (!cache.has(arg)) cache.set(arg, fn(arg));\n    return cache.get(arg);\n  };\n}","exp":"Замыкание хранит приватный кэш `Map`. При каждом вызове вычисляйте, только если такой аргумент ещё не встречался.","hint":"Замыкание + `new Map()`: сначала проверьте `cache.has(arg)`."},{"type":"order","q":"Соберите из строк асинхронный загрузчик, который возвращает `null` при ошибке.","lines":["async function load(url) {","  try {","    const res = await fetch(url);","    return await res.json();","  } catch (err) {","    return null;","  }","}"],"exp":"`try` оборачивает вызовы с `await`; любая ошибка переходит в `catch`. Нужно дождаться ответа через `await`, прежде чем читать JSON.","hint":"`fetch` идёт раньше `res.json()`."},{"type":"code","q":"Напишите `chunk(arr, size)`, которая разбивает массив на группы по `size` элементов (последняя может быть меньше).","fn":"chunk(arr, size)","starter":"function chunk(arr, size) {\n  \n}","tests":[{"e":"chunk([1, 2, 3, 4, 5], 2)","v":[[1,2],[3,4],[5]]},{"e":"chunk([], 3)","v":[]},{"e":"chunk([1, 2, 3], 3)","v":[[1,2,3]]}],"solution":"function chunk(arr, size) {\n  const out = [];\n  for (let i = 0; i < arr.length; i += size) {\n    out.push(arr.slice(i, i + size));\n  }\n  return out;\n}","exp":"Шагайте по массиву по `size` элементов и вырезайте каждое окно через `slice`. `slice` безопасно останавливается на конце массива.","hint":"`for (let i = 0; i < arr.length; i += size)` и `arr.slice(i, i + size)`."}]}
+];
+const MAX_STARS = LEVELS.length * 3;
+
+/* =====================================================================
+   UTILITIES
+   ===================================================================== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const md = s => esc(s).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>');
+const rand = a => a[Math.floor(Math.random() * a.length)];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function shuffleNotSorted(n) { const idx = [...Array(n).keys()]; let s; let tries = 0; do { s = shuffle(idx); } while (s.every((v, i) => v === i) && ++tries < 20); return s; }
+const fmtTime = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+const fmtNum = n => n.toLocaleString('ru-RU');
+
+/* =====================================================================
+   SAVE DATA
+   ===================================================================== */
+const SAVE_KEY = 'js-odyssey-save-v1';
+function freshSave() { return { levels: {}, name: '', sfx: true, music: true, stats: { correct: 0, wrong: 0 }, certId: null, completedAt: null }; }
+function loadSave() {
+  try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && s.levels) return Object.assign(freshSave(), s); } catch (e) {}
+  return freshSave();
+}
+let save = loadSave();
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+const lvlSave = i => save.levels[i];
+const completedCount = () => LEVELS.filter((_, i) => save.levels[i]).length;
+const totalStars = () => LEVELS.reduce((s, _, i) => s + (save.levels[i]?.stars || 0), 0);
+const totalXP = () => LEVELS.reduce((s, _, i) => s + (save.levels[i]?.xp || 0), 0);
+const isUnlocked = i => i === 0 || !!save.levels[i - 1];
+const currentIndex = () => { const i = LEVELS.findIndex((_, k) => !save.levels[k]); return i === -1 ? LEVELS.length - 1 : i; };
+
+/* =====================================================================
+   AUDIO ENGINE — everything synthesized with WebAudio, no files needed
+   ===================================================================== */
+let ctx = null, master, sfxBus, musicBus, reverb, noiseBuf;
+function audioInit() {
+  if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+  ctx = new AC();
+  const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 4;
+  master = ctx.createGain(); master.gain.value = .9; master.connect(comp); comp.connect(ctx.destination);
+  reverb = ctx.createConvolver(); reverb.buffer = makeImpulse(2.6, 2.8);
+  const wet = ctx.createGain(); wet.gain.value = .9; reverb.connect(wet); wet.connect(master);
+  sfxBus = ctx.createGain(); sfxBus.gain.value = .75; sfxBus.connect(master);
+  const sfxSend = ctx.createGain(); sfxSend.gain.value = .22; sfxBus.connect(sfxSend); sfxSend.connect(reverb);
+  musicBus = ctx.createGain(); musicBus.gain.value = 0; musicBus.connect(master);
+  const mSend = ctx.createGain(); mSend.gain.value = .55; musicBus.connect(mSend); mSend.connect(reverb);
+  noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+  const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+}
+function makeImpulse(sec, decay) {
+  const len = ctx.sampleRate * sec, b = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay); }
+  return b;
+}
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+function tone(freq, o = {}) {
+  if (!ctx) return; const bus = o.bus || sfxBus; if (bus === sfxBus && !save.sfx) return;
+  const at = o.at ?? ctx.currentTime + (o.t || 0), dur = o.dur || .15, vol = o.vol || .2, a = o.a || .005;
+  const osc = ctx.createOscillator(), g = ctx.createGain();
+  osc.type = o.type || 'sine'; osc.frequency.setValueAtTime(freq, at); if (o.detune) osc.detune.value = o.detune;
+  if (o.slide) osc.frequency.exponentialRampToValueAtTime(o.slide, at + dur);
+  g.gain.setValueAtTime(.0001, at); g.gain.exponentialRampToValueAtTime(vol, at + a); g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+  let node = osc;
+  if (o.lp) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp; osc.connect(f); node = f; }
+  node.connect(g); g.connect(bus); osc.start(at); osc.stop(at + dur + .05);
+}
+function noise(dur, o = {}) {
+  if (!ctx) return; const bus = o.bus || sfxBus; if (bus === sfxBus && !save.sfx) return;
+  const at = o.at ?? ctx.currentTime + (o.t || 0);
+  const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+  const f = ctx.createBiquadFilter(); f.type = o.type || 'bandpass'; f.frequency.setValueAtTime(o.f || 1000, at); f.Q.value = o.q || 1;
+  if (o.f2) f.frequency.exponentialRampToValueAtTime(o.f2, at + dur);
+  const g = ctx.createGain(); g.gain.setValueAtTime(o.vol || .1, at); g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+  src.connect(f); f.connect(g); g.connect(bus); src.start(at); src.stop(at + dur + .02);
+}
+function bell(f, t, vol) { tone(f, { t, dur: 1.1, vol }); tone(f * 2.01, { t, dur: .5, vol: vol * .35 }); tone(f * 3.02, { t, dur: .25, vol: vol * .12 }); }
+
+let lastType = 0;
+const sfx = {
+  click()  { tone(620, { dur: .07, type: 'triangle', vol: .12, slide: 880 }); },
+  hover()  { tone(1700, { dur: .025, vol: .018 }); },
+  select() { tone(520, { dur: .08, type: 'triangle', vol: .14 }); tone(780, { t: .03, dur: .09, vol: .07 }); },
+  type()   { const n = performance.now(); if (n - lastType < 35) return; lastType = n; noise(.025, { vol: .05, type: 'highpass', f: 3200 + Math.random() * 1500 }); },
+  correct(streak = 0) {
+    const b = 523.25 * Math.pow(2, Math.min(streak, 7) / 12);
+    [1, 1.26, 1.5, 2].forEach((m, i) => bell(b * m, i * .065, .11));
+    noise(.35, { t: .1, vol: .03, type: 'highpass', f: 7000 });
+  },
+  wrong()  { tone(196, { dur: .3, type: 'square', vol: .08, slide: 130, lp: 1100 }); tone(185, { t: .02, dur: .32, type: 'sawtooth', vol: .06, slide: 118, lp: 900 }); noise(.14, { vol: .14, type: 'lowpass', f: 280 }); },
+  heart()  { tone(95, { dur: .4, vol: .35, slide: 45 }); },
+  nope()   { tone(330, { dur: .1, type: 'square', vol: .05, lp: 1500 }); tone(262, { t: .1, dur: .16, type: 'square', vol: .05, lp: 1200 }); },
+  run()    { [0, 1, 2].forEach(i => tone(880 + i * 240, { t: i * .045, dur: .05, type: 'square', vol: .035, lp: 3200 })); },
+  pass(i)  { tone(1046.5 * Math.pow(2, i * 2 / 12), { dur: .09, type: 'triangle', vol: .08 }); },
+  hint()   { bell(1318.5, 0, .07); bell(1760, .09, .05); },
+  combo()  { noise(.4, { vol: .08, type: 'bandpass', f: 600, f2: 6000, q: 3 }); [784, 988, 1175, 1568].forEach((f, i) => tone(f, { t: .05 + i * .05, dur: .2, type: 'triangle', vol: .07 })); },
+  unlock() { noise(.7, { vol: .1, type: 'bandpass', f: 300, f2: 5000, q: 2 }); [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, { t: .18 + i * .07, dur: .45, type: 'triangle', vol: .09 })); },
+  star(i)  { const f = [783.99, 987.77, 1174.66][i]; bell(f, 0, .16); bell(f * 1.5, .05, .05); noise(.3, { vol: .04, type: 'highpass', f: 7000 }); },
+  complete() {
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => { tone(f, { t: i * .09, dur: .35, type: 'triangle', vol: .12 }); tone(f * 2, { t: i * .09, dur: .2, vol: .035 }); });
+    [523.25, 659.25, 783.99].forEach(f => tone(f, { t: .38, dur: 1.7, type: 'triangle', vol: .07, a: .03 }));
+    tone(130.81, { t: .38, dur: 1.5, vol: .22 }); noise(.9, { t: .38, vol: .035, type: 'highpass', f: 6500 });
+  },
+  fail()   { [392, 370, 349.2, 329.6].forEach((f, i) => tone(f, { t: i * .22, dur: i === 3 ? 1 : .26, type: 'sawtooth', vol: .065, lp: 1000, slide: i === 3 ? 290 : null })); tone(82, { t: .66, dur: 1, vol: .2 }); },
+  tick()   { tone(1250, { dur: .04, type: 'square', vol: .035, lp: 2600 }); },
+  whoosh() { noise(.28, { vol: .05, type: 'bandpass', f: 700, f2: 2600, q: 1.5 }); },
+  locked() { tone(160, { dur: .12, type: 'square', vol: .05, lp: 700 }); tone(150, { t: .1, dur: .14, type: 'square', vol: .05, lp: 700 }); },
+  fanfare() {
+    [[392, 0], [523.25, .12], [659.25, .24], [783.99, .36], [659.25, .6], [783.99, .72]].forEach(([f, t]) => { tone(f, { t, dur: .3, type: 'sawtooth', vol: .045, lp: 2600 }); tone(f, { t, dur: .3, type: 'triangle', vol: .08 }); });
+    [523.25, 659.25, 783.99, 1046.5].forEach(f => tone(f, { t: .92, dur: 2.4, type: 'triangle', vol: .065, a: .03 }));
+    tone(130.81, { t: .92, dur: 2.2, vol: .22 }); bell(2093, 1.05, .05); bell(2637, 1.2, .04);
+  },
+};
+
+/* Generative background music: calm pad for learning, driving pulse for bosses */
+const Music = (() => {
+  let timer = null, next = 0, step = 0, mode = 'calm';
+  const P = {
+    calm: { spb: .42, chords: [[57, 60, 64, 67], [53, 57, 60, 64], [48, 55, 59, 64], [55, 59, 62, 66]], scale: [69, 72, 74, 76, 79, 81, 84], pluck: .28 },
+    boss: { spb: .2, chords: [[50, 53, 57, 62], [46, 50, 53, 58], [43, 50, 55, 58], [45, 49, 52, 57]], scale: [62, 65, 67, 69, 72, 74, 77], pluck: .42 },
+  };
+  function pad(f, at, dur) {
+    [-7, 7].forEach(dt => {
+      const o = ctx.createOscillator(), g = ctx.createGain(), lp = ctx.createBiquadFilter();
+      o.type = 'triangle'; o.frequency.value = f; o.detune.value = dt; lp.type = 'lowpass'; lp.frequency.value = 900;
+      g.gain.setValueAtTime(.0001, at); g.gain.exponentialRampToValueAtTime(.03, at + Math.min(1, dur * .4)); g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+      o.connect(lp); lp.connect(g); g.connect(musicBus); o.start(at); o.stop(at + dur + .05);
+    });
+  }
+  function play(s, at) {
+    const p = P[mode], ch = p.chords[Math.floor(s / 8) % 4], pos = s % 8, B = musicBus;
+    if (pos === 0) ch.forEach(m => pad(mtof(m), at, p.spb * 8 + .5));
+    if (mode === 'calm') {
+      if (pos === 0 || pos === 6) tone(mtof(ch[0] - 12), { at, dur: p.spb * 3, vol: .14, bus: B, a: .03 });
+    } else {
+      tone(mtof(ch[0] - 12), { at, dur: p.spb * .9, type: 'sawtooth', vol: .06, lp: 420, bus: B });
+      if (pos % 4 === 0) tone(120, { at, dur: .2, vol: .3, slide: 42, bus: B });
+      if (pos % 2 === 1) noise(.05, { at, vol: .025, type: 'highpass', f: 8000, bus: B });
+      if (pos === 4) noise(.15, { at, vol: .05, type: 'bandpass', f: 1800, bus: B });
+    }
+    if (Math.random() < p.pluck) { const m = rand(p.scale); tone(mtof(m), { at, dur: .7, type: 'triangle', vol: .045, bus: B }); tone(mtof(m) * 2, { at, dur: .25, vol: .012, bus: B }); }
+  }
+  function sched() {
+    if (!ctx) return;
+    if (next < ctx.currentTime - .2) next = ctx.currentTime + .05;
+    while (next < ctx.currentTime + .3) { play(step, next); next += P[mode].spb; step++; }
+  }
+  return {
+    start() {
+      if (!ctx || !save.music) return;
+      musicBus.gain.cancelScheduledValues(ctx.currentTime); musicBus.gain.setTargetAtTime(.55, ctx.currentTime, .6);
+      if (!timer) { next = ctx.currentTime + .1; timer = setInterval(sched, 60); }
+    },
+    stop() {
+      if (!ctx) return; musicBus.gain.cancelScheduledValues(ctx.currentTime); musicBus.gain.setTargetAtTime(0, ctx.currentTime, .15);
+      const t = timer; timer = null; setTimeout(() => { if (!timer) clearInterval(t); }, 600);
+    },
+    setMode(m) { if (m !== mode) { mode = m; step = 0; } },
+  };
+})();
+document.addEventListener('pointerdown', () => { audioInit(); if (save.music) Music.start(); }, true);
+document.addEventListener('visibilitychange', () => { if (!ctx) return; document.hidden ? ctx.suspend() : ctx.resume(); });
+
+/* =====================================================================
+   SYNTAX HIGHLIGHTER + EDITOR
+   ===================================================================== */
+const KW = new Set('const let var function return if else for while do of in new class this async await yield typeof instanceof delete try catch finally throw extends super static get set break continue switch case default import export from'.split(' '));
+const LIT = new Set('null undefined true false NaN Infinity'.split(' '));
+function hl(src) {
+  const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?|`(?:\\.|[^`\\])*`?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)|(=>|[-+*\/%=!<>&|?:^~]+)/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    const [tok, com, str, num, id] = m;
+    if (com) out += `<span class="c-com">${esc(tok)}</span>`;
+    else if (str) out += `<span class="c-str">${esc(tok)}</span>`;
+    else if (num) out += `<span class="c-num">${tok}</span>`;
+    else if (id) {
+      if (KW.has(id)) out += `<span class="c-kw">${id}</span>`;
+      else if (LIT.has(id)) out += `<span class="c-lit">${id}</span>`;
+      else if (/^\s*\(/.test(src.slice(re.lastIndex))) out += `<span class="c-fn">${id}</span>`;
+      else if (/^[A-Z]/.test(id)) out += `<span class="c-cls">${id}</span>`;
+      else out += id;
+    } else out += `<span class="c-op">${esc(tok)}</span>`;
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
+const codeBlock = src => `<pre class="code">${hl(src)}</pre>`;
+
+function insertText(el, text) {
+  el.focus();
+  let ok = false;
+  try { ok = document.execCommand('insertText', false, text); } catch (e) {}
+  if (!ok) { const s = el.selectionStart, e = el.selectionEnd; el.setRangeText(text, s, e, 'end'); el.dispatchEvent(new Event('input', { bubbles: true })); }
+}
+let editor = null;
+function mountEditor(host, value, onChange) {
+  host.innerHTML = '<pre aria-hidden="true"></pre><textarea spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" aria-label="Редактор кода"></textarea>';
+  const ta = $('textarea', host), pre = $('pre', host);
+  const syncScroll = () => { pre.scrollTop = ta.scrollTop; pre.scrollLeft = ta.scrollLeft; };
+  const sync = () => { pre.innerHTML = hl(ta.value) + '\n'; syncScroll(); onChange(ta.value); };
+  ta.value = value; sync();
+  ta.addEventListener('input', () => { sync(); sfx.type(); });
+  ta.addEventListener('scroll', syncScroll);
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Tab') { e.preventDefault(); insertText(ta, '  '); }
+    else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runTests(); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      const line = ta.value.slice(0, ta.selectionStart).split('\n').pop();
+      let ind = line.match(/^\s*/)[0]; if (/[{([]\s*$/.test(line)) ind += '  ';
+      insertText(ta, '\n' + ind);
+    } else if (e.key === '}' || e.key === ']' || e.key === ')') {
+      const pos = ta.selectionStart, line = ta.value.slice(0, pos).split('\n').pop();
+      if (/^\s{2,}$/.test(line) && ta.selectionStart === ta.selectionEnd) { e.preventDefault(); ta.setSelectionRange(pos - 2, pos); insertText(ta, e.key); }
+    }
+  });
+  return { ta, set(v) { ta.value = v; sync(); }, insert(t) { insertText(ta, t); } };
+}
+const KEYS = ['⇥', '(', ')', '{', '}', '[', ']', '=>', '=', '.', ',', ';', '"', '`', '+', '-', '*', '/', '%', '<', '>', '!', '===', '&&', '||', '...', '?', ':', 'return '];
+
+/* =====================================================================
+   SANDBOXED CODE RUNNER (Web Worker with timeout, inline fallback)
+   ===================================================================== */
+async function execCore(code, exprs) {
+  const logs = [];
+  const fmt = v => { try { if (typeof v === 'string') return v; if (v === undefined) return 'undefined'; if (typeof v === 'function') return 'ƒ ' + (v.name || 'anonymous'); return JSON.stringify(v) ?? String(v); } catch (e) { return String(v); } };
+  const fake = { log: (...a) => { if (logs.length < 40) logs.push(a.map(fmt).join(' ')); } };
+  fake.info = fake.warn = fake.error = fake.debug = fake.log;
+  function pack(v, d) {
+    if (typeof v === 'function') return { __type: 'function' };
+    if (typeof v === 'symbol') return String(v);
+    if (v && typeof v === 'object') {
+      if (d > 25) return '[too deep]';
+      if (Array.isArray(v)) return v.map(x => pack(x, d + 1));
+      if (v instanceof Map) return { __type: 'Map', size: v.size };
+      if (v instanceof Set) return { __type: 'Set', size: v.size };
+      const o = {}; for (const k of Object.keys(v)) o[k] = pack(v[k], d + 1); return o;
+    }
+    return v;
+  }
+  let fns;
+  try { fns = new Function('console', code + '\n;return [' + exprs.map(e => 'async () => (' + e + ')').join(',\n') + '];')(fake); }
+  catch (err) { return { error: (err && err.name || 'Error') + ': ' + (err && err.message || err), logs }; }
+  const results = [];
+  for (const f of fns) {
+    try { results.push({ ok: true, value: pack(await f(), 0) }); }
+    catch (err) { results.push({ ok: false, error: (err && err.name || 'Error') + ': ' + (err && err.message || err) }); }
+  }
+  return { results, logs };
+}
+const WORKER_SRC = execCore.toString() + `
+self.onmessage = async (e) => { const r = await execCore(e.data.code, e.data.exprs); try { self.postMessage(r); } catch (err) { self.postMessage({ error: 'Не удалось прочитать результат: ' + err.message, logs: [] }); } };
+self.postMessage({ ready: true });`;
+let workerURL = null;
+function runCode(code, exprs) {
+  return new Promise(resolve => {
+    let w, ready = false, done = false;
+    const finish = r => { if (done) return; done = true; clearTimeout(to); try { w && w.terminate(); } catch (e) {} resolve(r); };
+    try { workerURL = workerURL || URL.createObjectURL(new Blob([WORKER_SRC], { type: 'text/javascript' })); w = new Worker(workerURL); }
+    catch (e) { return execCore(code, exprs).then(resolve); }
+    const to = setTimeout(() => finish({ error: '⏱ Превышено время (3 с) — нет ли бесконечного цикла?', logs: [] }), 3000);
+    w.onmessage = e => { if (e.data && e.data.ready) { ready = true; return; } finish(e.data); };
+    w.onerror = e => { e.preventDefault && e.preventDefault(); if (!ready) { done = true; clearTimeout(to); try { w.terminate(); } catch (x) {} execCore(code, exprs).then(resolve); } else finish({ error: 'Uncaught ' + (e.message || 'error'), logs: [] }); };
+    w.postMessage({ code, exprs });
+  });
+}
+function deepEqual(a, b) {
+  if (Object.is(a, b)) return true;
+  if (typeof a === 'number' && typeof b === 'number') return Math.abs(a - b) < 1e-9;
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    const ka = Object.keys(a), kb = Object.keys(b); if (ka.length !== kb.length) return false;
+    return ka.every(k => Object.prototype.hasOwnProperty.call(b, k) && deepEqual(a[k], b[k]));
+  }
+  return false;
+}
+function show(v) {
+  if (v === undefined) return 'undefined'; if (v === null) return 'null';
+  if (typeof v === 'string') return JSON.stringify(v);
+  if (typeof v !== 'object') return String(v);
+  if (Array.isArray(v)) return '[' + v.map(show).join(', ') + ']';
+  if (v.__type === 'function') return 'ƒ (функция)';
+  if (v.__type) return v.__type + '(' + v.size + ')';
+  const ks = Object.keys(v); if (!ks.length) return '{}';
+  return '{ ' + ks.map(k => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : JSON.stringify(k)) + ': ' + show(v[k])).join(', ') + ' }';
+}
+
+/* =====================================================================
+   UI HELPERS — screens, modal, toast, floats, confetti
+   ===================================================================== */
+const app = $('#app');
+function setScreen(html) { app.innerHTML = html; window.scrollTo(0, 0); }
+let modalDismiss = true, modalOnClose = null;
+function openModal(html, { dismiss = true, onClose = null } = {}) {
+  modalDismiss = dismiss; modalOnClose = onClose; sfx.whoosh();
+  $('#modal').innerHTML = `<div class="modal-wrap" data-act="${dismiss ? 'close-modal-bg' : ''}"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  setTimeout(() => { const b = $('#modal .btn:not(.ghost)'); b && b.focus({ preventScroll: true }); }, 50);
+}
+function closeModal() { $('#modal').innerHTML = ''; const f = modalOnClose; modalOnClose = null; f && f(); }
+const modalOpen = () => $('#modal').innerHTML !== '';
+function toast(html, ms = 2200) {
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = html; $('#toast').appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, ms);
+}
+function floatText(text, el) {
+  const r = el ? el.getBoundingClientRect() : { left: innerWidth / 2, width: 0, top: innerHeight - 140 };
+  const f = document.createElement('div'); f.className = 'float'; f.textContent = text;
+  f.style.left = (r.left + r.width / 2) + 'px'; f.style.top = (r.top - 10) + 'px';
+  document.body.appendChild(f); setTimeout(() => f.remove(), 1200);
+}
+const HEART = '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+
+const Confetti = (() => {
+  const cv = $('#fx'), c = cv.getContext('2d'); let parts = [], raf = null;
+  const COLORS = ['#f7df1e', '#3ddc97', '#4cc9f0', '#b388ff', '#ff8c42', '#ff5d73', '#ffffff'];
+  function size() { const r = devicePixelRatio || 1; cv.width = innerWidth * r; cv.height = innerHeight * r; c.setTransform(r, 0, 0, r, 0, 0); }
+  addEventListener('resize', size); size();
+  function loop() {
+    c.clearRect(0, 0, innerWidth, innerHeight);
+    parts = parts.filter(p => p.y < innerHeight + 40 && p.life < 400);
+    for (const p of parts) {
+      p.vy += p.g; p.vx *= .992; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+      c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.fillStyle = p.color;
+      const w = p.w * Math.abs(Math.cos(p.life * .12 + p.r));
+      p.circle ? (c.beginPath(), c.arc(0, 0, p.w / 2.4, 0, 6.28), c.fill()) : c.fillRect(-w / 2, -p.h / 2, w, p.h);
+      c.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(loop) : (c.clearRect(0, 0, innerWidth, innerHeight), null);
+  }
+  return {
+    burst(n = 140, x = innerWidth / 2, y = innerHeight * .35) {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      for (let i = 0; i < n; i++) {
+        const a = Math.random() * Math.PI * 2, s = 4 + Math.random() * 11;
+        parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 6, g: .28 + Math.random() * .1, w: 7 + Math.random() * 7, h: 10 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - .5) * .3, color: rand(COLORS), life: 0, circle: Math.random() < .25 });
+      }
+      if (!raf) raf = requestAnimationFrame(loop);
+    },
+  };
+})();
+
+/* =====================================================================
+   TITLE SCREEN
+   ===================================================================== */
+function showTitle() {
+  stopTimer(); run = null; Music.setMode('calm');
+  const toks = ['const', '=>', '{ }', 'async', '[ ]', '( )', '===', 'let', '.map()', 'await', 'class', 'null', '++', '&&', '?.', '...', 'return', 'this', '`${}`', 'NaN', 'yield', 'typeof', '!==', '%'];
+  const cols = ['#f7df1e', '#3ddc97', '#4cc9f0', '#b388ff', '#ff8c42'];
+  const floaters = toks.map((t, i) => `<span style="--x:${(i * 41 + 7) % 100}%;--s:${14 + (i * 7) % 18}px;--d:${16 + (i * 5) % 18}s;--dl:-${(i * 3.3) % 24}s;--c:${cols[i % 5]}">${esc(t)}</span>`).join('');
+  const started = completedCount() > 0;
+  setScreen(`<div class="screen title">
+    <div class="floaters">${floaters}</div>
+    <div class="title-inner">
+      <div class="logo"><div class="badge">JS</div><h1>Odyssey</h1></div>
+      <p class="tag">${LEVELS.length} уровней · 4 ранга · 1 сертификат.<br>От <code>let</code> до <code>async</code> — изучай JavaScript, играя.</p>
+      ${started ? `<div class="title-stats"><span class="chip">🏁 Уровни: ${completedCount()}/${LEVELS.length}</span><span class="chip">⭐ ${totalStars()}/${MAX_STARS}</span><span class="chip">⚡ ${fmtNum(totalXP())} XP</span></div>` : ''}
+      <button class="btn big" data-act="play">${started ? 'Продолжить ▶' : 'Начать квест ▶'}</button>
+      <div class="row">
+        <button class="btn ghost sm" data-act="cert">🎓 Сертификат</button>
+        <button class="btn ghost sm" data-act="settings">⚙️ Настройки</button>
+      </div>
+      <p class="foot-note">🎧 Лучше со звуком · прогресс сохраняется в этом браузере автоматически</p>
+    </div>
+  </div>`);
+}
+
+/* =====================================================================
+   MAP SCREEN
+   ===================================================================== */
+function topbar(extra = '') {
+  return `<header class="topbar"><div class="topbar-in">
+    <button class="mini-logo" data-act="title"><i>JS</i>Odyssey</button>
+    <div class="grow"></div>${extra}
+    <span class="chip">⭐ ${totalStars()}</span>
+    <span class="chip">⚡ ${fmtNum(totalXP())}</span>
+    <button class="icon-btn" data-act="settings" aria-label="Настройки">⚙️</button>
+  </div></header>`;
+}
+function showMap(focusIdx) {
+  stopTimer(); run = null; Music.setMode('calm');
+  const cur = currentIndex(), done = completedCount();
+  const offsets = [0, 70, 0, -70, 0];
+  let html = topbar() + '<div class="map">';
+  TIERS.forEach((tier, ti) => {
+    const idxs = LEVELS.map((l, i) => i).filter(i => LEVELS[i].tier === ti);
+    const tStars = idxs.reduce((s, i) => s + (save.levels[i]?.stars || 0), 0);
+    const tierLocked = !isUnlocked(idxs[0]);
+    html += `<section class="tier ${tierLocked ? 'locked' : ''}" style="--tc:${tier.c};--td:${tier.d}">
+      <div class="tier-head"><div class="tier-ico">${tier.icon}</div>
+        <div><h2><small>Ранг ${ti + 1}</small>${tier.name}</h2><p>${tier.desc}</p></div>
+        <div class="tier-prog"><b>★ ${tStars}/${idxs.length * 3}</b>${idxs.filter(i => save.levels[i]).length}/${idxs.length} пройдено</div>
+      </div><div class="path">`;
+    idxs.forEach((i, j) => {
+      const L = LEVELS[i], s = save.levels[i], locked = !isUnlocked(i), isCur = i === cur && !s;
+      const stars = [0, 1, 2].map(k => `<span class="${s && s.stars > k ? 'on' : ''}">★</span>`).join('');
+      html += `<div class="node-wrap ${locked ? 'is-locked' : ''}" style="--o:${offsets[j]}">
+        <button class="node ${L.boss ? 'boss' : ''} ${locked ? 'locked' : ''} ${isCur ? 'current' : ''}" data-act="node" data-i="${i}" aria-label="Уровень ${i + 1}: ${esc(L.title)}">
+          ${isCur ? `<div class="start-flag">${done ? 'ДАЛЕЕ' : 'СТАРТ'}</div>` : ''}<span>${locked ? '🔒' : L.icon}</span></button>
+        <div class="node-title">${i + 1}. ${esc(L.title)}</div>
+        ${s ? `<div class="mini-stars">${stars}</div>` : ''}
+      </div>`;
+    });
+    html += '</div></section>';
+  });
+  const pct = Math.round(done / LEVELS.length * 100);
+  html += done === LEVELS.length
+    ? `<div class="cert-card"><div class="big-ico">🎓</div><h2>Квест пройден!</h2><p>Ваш сертификат готов.</p><button class="btn" data-act="cert">Получить сертификат</button></div>`
+    : `<div class="cert-card locked"><div class="big-ico">🔒🎓</div><h2>Сертификат о прохождении</h2><p>Пройдите все ${LEVELS.length} уровней, чтобы открыть его.</p><div class="pbar"><i style="width:${pct}%"></i></div><b>Уровни: ${done}/${LEVELS.length} · ${pct}%</b></div>`;
+  html += '</div>';
+  setScreen(html);
+  const target = focusIdx != null ? $(`.node[data-i="${focusIdx}"]`) : $('.node.current');
+  if (target) setTimeout(() => target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 120);
+}
+function openIntro(i) {
+  const L = LEVELS[i], tier = TIERS[L.tier], s = save.levels[i];
+  openModal(`<div style="--tc:${tier.c};--td:${tier.d}">
+    <div class="m-ico">${L.icon}</div>
+    <div class="m-tier">Ранг ${L.tier + 1} · ${tier.name}${L.boss ? ' · Босс' : ''}</div>
+    <h2>${i + 1}. ${esc(L.title)}</h2>
+    <p class="brief">${md(L.brief)}</p>
+    <div class="m-meta">
+      <span class="chip">📝 Заданий: ${L.tasks.length}</span><span class="chip" style="color:#ff6b86">♥ 3 жизни</span>
+      ${L.boss ? `<span class="chip">⏱ ${fmtTime(L.time)}</span>` : ''}
+      ${s ? `<span class="chip" style="color:var(--js)">Рекорд ${'★'.repeat(s.stars)}${'☆'.repeat(3 - s.stars)}</span>` : ''}
+    </div>
+    <p style="font-size:13px;margin-top:10px">Ошибки и подсказки отнимают звёзды. Задачи на код никогда не отнимают жизни — экспериментируйте смело.</p>
+    <div class="m-btns"><button class="btn ghost" data-act="close-modal">Назад</button><button class="btn" data-act="start" data-i="${i}">${s ? 'Ещё раз' : 'Начать'} ▶</button></div>
+  </div>`);
+}
+
+/* =====================================================================
+   LEVEL PLAY
+   ===================================================================== */
+let run = null, timerId = null;
+function startLevel(i) {
+  stopTimer();
+  const L = LEVELS[i], tier = TIERS[L.tier];
+  run = { i, L, tier, queue: L.tasks.map((_, k) => k), done: new Set(), hearts: 3, mistakes: 0, hints: 0, codeFails: 0, xp: 0, streak: 0, bestStreak: 0, time: L.time || 0, paused: false, sheet: false, wrongOnce: new Set(), hinted: new Set(), cur: null };
+  Music.setMode(L.boss ? 'boss' : 'calm');
+  setScreen(`<div class="screen level" style="--tc:${tier.c};--td:${tier.d}">
+    <header class="lvl-top"><div class="lvl-top-in">
+      <button class="icon-btn" data-act="quit" aria-label="Выйти из уровня">✕</button>
+      <div class="bar"><div class="fill" id="prog"></div></div>
+      <div class="hearts" id="hearts">${HEART.repeat(3)}</div>
+    </div>
+    <div class="lvl-sub">
+      <span class="lvl-name"><b>${L.boss ? '👑 БОСС' : 'Уровень ' + (i + 1)}</b> · ${esc(L.title)}</span>
+      <span class="chip" id="streak">🔥 0</span><span class="chip" id="xpc">⚡ 0</span>
+      ${L.boss ? `<span class="chip timer" id="timer">⏱ ${fmtTime(run.time)}</span>` : ''}
+    </div></header>
+    <main class="task-wrap" id="task"></main>
+    <footer class="actions" id="actions"></footer>
+    <div class="sheet" id="sheet"></div>
+  </div>`);
+  updateHUD(); renderTask();
+  if (L.boss) startTimer();
+}
+function updateHUD() {
+  if (!run) return;
+  $('#prog').style.width = (run.done.size / run.L.tasks.length * 100) + '%';
+  $$('#hearts svg').forEach((h, k) => h.classList.toggle('lost', k >= run.hearts));
+  const st = $('#streak'); st.textContent = '🔥 ' + run.streak; st.classList.toggle('hot', run.streak >= 3);
+  $('#xpc').textContent = '⚡ ' + run.xp;
+  const t = $('#timer'); if (t) { t.textContent = '⏱ ' + fmtTime(Math.max(0, run.time)); t.classList.toggle('urgent', run.time <= 15); }
+}
+function startTimer() {
+  stopTimer();
+  timerId = setInterval(() => {
+    if (!run || run.paused || modalOpen()) return;
+    run.time--; updateHUD();
+    if (run.time <= 10 && run.time > 0) sfx.tick();
+    if (run.time <= 0) { stopTimer(); failLevel('time'); }
+  }, 1000);
+}
+function stopTimer() { clearInterval(timerId); timerId = null; }
+
+function renderTask() {
+  const idx = run.queue[0], T = run.L.tasks[idx];
+  run.cur = { idx, T, sel: null, fails: 0, code: '', passed: false };
+  editor = null;
+  const label = { quiz: '🔮 Что выведет код', fill: '✏️ Заполните пропуск', order: '🧱 Соберите код', code: '⌨️ Задача на код' }[T.type];
+  let body = '';
+  if (T.type === 'quiz') {
+    const ord = shuffle(T.opts.map((_, k) => k));
+    body = (T.code ? codeBlock(T.code) : '') + `<div class="opts" id="opts">${ord.map((k, j) => `<button class="opt" data-act="opt" data-k="${k}"><span class="k">${j + 1}</span><span>${esc(T.opts[k])}</span></button>`).join('')}</div>`;
+  } else if (T.type === 'fill') {
+    const [a, b] = T.code.split('___');
+    const w = Math.max(4, ...T.answers.map(x => x.length)) + 2;
+    body = `<pre class="code">${hl(a)}<input class="blank" id="blank" style="width:${w}ch" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Ваш ответ">${hl(b)}</pre>
+      <div class="keys">${KEYS.slice(1, 25).map(k => `<button class="key" data-key="${esc(k)}">${esc(k)}</button>`).join('')}</div>`;
+  } else if (T.type === 'order') {
+    run.cur.placed = []; run.cur.pool = shuffleNotSorted(T.lines.length);
+    body = `<div class="order-zone" id="placed"></div><div class="order-label">Нажимайте на строки по порядку ↑</div><div class="order-pool" id="pool"></div>`;
+  } else if (T.type === 'code') {
+    run.cur.code = T.starter;
+    body = `<div class="editor-tools"><span class="mono">${esc(T.fn)}</span><button class="link" data-act="reset-code">↺ Сбросить код</button></div>
+      <div class="editor" id="editor"></div>
+      <div class="keys">${KEYS.map(k => `<button class="key" data-key="${esc(k)}">${esc(k === 'return ' ? 'return' : k)}</button>`).join('')}</div>
+      <div class="tests" id="tests"></div><div id="console"></div>`;
+  }
+  $('#task').innerHTML = `<div class="card task-card enter" id="card">
+    <div class="task-type"><span>${label}</span>${run.wrongOnce.has(idx) ? '<span class="again">↺ Вторая попытка</span>' : ''}</div>
+    <h2 class="task-q">${md(T.q)}</h2>
+    ${body}
+    <div class="hintbox" id="hintbox" ${run.hinted.has(idx) ? '' : 'hidden'}>💡 ${md(T.hint)}</div>
+  </div>`;
+  if (T.type === 'order') renderOrder();
+  if (T.type === 'code') { editor = mountEditor($('#editor'), run.cur.code, v => { run.cur.code = v; }); renderTests(); }
+  if (T.type === 'fill') { const inp = $('#blank'); inp.addEventListener('input', () => { $('#checkBtn').disabled = !inp.value.trim(); sfx.type(); }); if (matchMedia('(hover:hover)').matches) setTimeout(() => inp.focus(), 50); }
+  renderActions();
+  updateHUD();
+}
+function renderActions() {
+  const T = run.cur.T, hinted = run.hinted.has(run.cur.idx);
+  const right = T.type === 'code'
+    ? `${run.cur.fails >= 2 ? '<button class="btn ghost sm" data-act="solution">👀 Решение</button>' : ''}<button class="btn" data-act="run" id="runBtn">▶ Запустить</button>`
+    : `<button class="btn" data-act="check" id="checkBtn" disabled>Проверить</button>`;
+  const a = $('#actions'); a.hidden = false;
+  a.innerHTML = `<div class="actions-in"><button class="btn ghost sm" data-act="hint" ${hinted ? 'disabled' : ''}>💡<span class="lbl"> Подсказка</span></button><div class="grow"></div>${right}</div>`;
+}
+function renderOrder() {
+  const T = run.cur.T, { placed, pool } = run.cur;
+  $('#placed').innerHTML = placed.length
+    ? placed.map((k, p) => `<button class="ln placed" data-act="unplace" data-p="${p}"><span class="ln-n">${p + 1}</span><code>${hl(T.lines[k])}</code></button>`).join('')
+    : '<div class="order-empty">Здесь появится ваша программа</div>';
+  $('#pool').innerHTML = pool.map((k, j) => `<button class="ln" data-act="place" data-j="${j}"><code>${hl(T.lines[k])}</code></button>`).join('');
+  const cb = $('#checkBtn'); if (cb) cb.disabled = pool.length > 0;
+}
+function renderTests(res) {
+  const T = run.cur.T;
+  const pass = res && res.results ? res.results.filter((r, k) => r.ok && deepEqual(r.value, T.tests[k].v)).length : 0;
+  $('#tests').innerHTML = `<h4><span>Тесты</span><span>${res && res.results ? 'пройдено ' + pass + '/' + T.tests.length : 'тестов: ' + T.tests.length}</span></h4>` +
+    T.tests.map((t, k) => {
+      let cls = '', icon = k + 1, extra = '';
+      if (res && res.results) {
+        const r = res.results[k], ok = r.ok && deepEqual(r.value, t.v);
+        cls = ok ? 'pass' : 'fail'; icon = ok ? '✓' : '✕';
+        if (!ok) extra = `<span class="got">${r.ok ? 'получено ' + esc(show(r.value)) : esc(r.error)}</span>`;
+      }
+      return `<div class="test ${cls}"><span class="ti">${icon}</span><span class="tx">${esc(t.t || t.e)} <span class="exp-v">→ ${esc(show(t.v))}</span>${extra}</span></div>`;
+    }).join('');
+  const con = $('#console');
+  con.innerHTML = (res && res.error ? `<div class="err-box">⚠ ${esc(res.error)}</div>` : '') +
+    (res && res.logs && res.logs.length ? `<div class="console"><b>console</b><br>${res.logs.map(esc).join('<br>')}</div>` : '');
+  return pass;
+}
+
+/* ---- answer checking ---- */
+const norm = s => s.replace(/\s+/g, '');
+function doCheck() {
+  if (!run || run.sheet) return;
+  const { T } = run.cur;
+  if (T.type === 'quiz') {
+    if (run.cur.sel == null) return;
+    const ok = run.cur.sel === 0;
+    $('#opts').classList.add('locked');
+    $$('.opt').forEach(b => { const k = +b.dataset.k; if (k === 0) b.classList.add('right'); else if (k === run.cur.sel) b.classList.add('wrong'); b.classList.remove('sel'); });
+    ok ? onCorrect() : onWrong(`<p style="margin-bottom:6px">Ответ: <code>${esc(T.opts[0])}</code></p>`);
+  } else if (T.type === 'fill') {
+    const inp = $('#blank'), v = inp.value; if (!v.trim()) return;
+    const ok = T.answers.some(a => norm(a) === norm(v));
+    inp.classList.add(ok ? 'right' : 'wrong'); inp.disabled = true;
+    ok ? onCorrect() : onWrong(`<p style="margin-bottom:6px">Ответ: <code>${esc(T.answers[0])}</code></p>`);
+  } else if (T.type === 'order') {
+    if (run.cur.pool.length) return;
+    const { placed } = run.cur;
+    const ok = placed.every((k, p) => T.lines[k] === T.lines[p]);
+    $$('#placed .ln').forEach((el, p) => { el.classList.add(T.lines[placed[p]] === T.lines[p] ? 'right' : 'wrong'); el.style.pointerEvents = 'none'; });
+    $('#pool').innerHTML = '';
+    ok ? onCorrect() : onWrong(`<p>Правильный порядок:</p>${codeBlock(T.lines.join('\n'))}`);
+  }
+}
+function onCorrect(extra = '') {
+  const { T, idx } = run.cur;
+  run.queue.shift(); run.done.add(idx);
+  run.streak++; run.bestStreak = Math.max(run.bestStreak, run.streak);
+  const mult = run.streak >= 5 ? 2 : run.streak >= 3 ? 1.5 : 1;
+  const gain = Math.round([10, 15, 20, 30][run.L.tier] * (T.type === 'code' ? 2 : 1) * mult);
+  run.xp += gain; save.stats.correct++;
+  sfx.correct(run.streak - 1);
+  floatText('+' + gain + ' XP', $('#checkBtn') || $('#runBtn'));
+  if (run.streak === 3 || run.streak === 5) { setTimeout(() => { sfx.combo(); toast(`🔥 ${run.streak} подряд! XP ×${mult}`); }, 350); }
+  updateHUD();
+  showSheet(true, extra + md(T.exp));
+}
+function onWrong(extra = '') {
+  const { T, idx } = run.cur;
+  run.queue.shift(); run.queue.push(idx); run.wrongOnce.add(idx);
+  run.hearts--; run.mistakes++; run.streak = 0; save.stats.wrong++;
+  sfx.wrong(); setTimeout(() => sfx.heart(), 140);
+  const card = $('#card'); card.classList.remove('enter', 'shake'); void card.offsetWidth; card.classList.add('shake');
+  const h = $$('#hearts svg')[run.hearts]; if (h) { h.classList.add('breaking'); setTimeout(() => h.classList.remove('breaking'), 650); }
+  if (navigator.vibrate) try { navigator.vibrate(60); } catch (e) {}
+  updateHUD();
+  showSheet(false, extra + md(T.exp));
+}
+const GOOD = ['В точку!', 'Верно!', 'Блестяще!', 'Точно!', 'Чистый код!', 'Получилось!', 'Отлично!'];
+const BAD = ['Не совсем', 'Почти!', 'Найден баг 🐛', 'Совсем рядом', 'Хитро, правда?'];
+function showSheet(ok, html) {
+  run.sheet = true; run.paused = true;
+  $('#actions').hidden = true;
+  const sh = $('#sheet');
+  sh.className = 'sheet ' + (ok ? 'ok' : 'no');
+  sh.innerHTML = `<div class="sheet-in">
+    <div class="sheet-head"><span class="ico">${ok ? '✓' : '✕'}</span><div><h3>${ok ? rand(GOOD) : rand(BAD)}</h3></div></div>
+    <div class="exp">${html}</div>
+    <button class="btn ${ok ? 'good' : 'bad'}" data-act="cont" id="cont">${!ok && run.hearts <= 0 ? 'Продолжить' : (run.queue.length ? 'Продолжить' : 'Завершить уровень')}</button>
+  </div>`;
+  requestAnimationFrame(() => { sh.classList.add('show'); setTimeout(() => $('#cont') && $('#cont').focus({ preventScroll: true }), 300); });
+}
+function continueNext() {
+  if (!run || !run.sheet) return;
+  run.sheet = false; run.paused = false;
+  $('#sheet').classList.remove('show');
+  if (run.hearts <= 0) return failLevel('hearts');
+  if (!run.queue.length) return completeLevel();
+  renderTask();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---- code challenges ---- */
+async function runTests() {
+  if (!run || run.sheet || !run.cur || run.cur.T.type !== 'code' || run.cur.running || run.cur.passed) return;
+  const T = run.cur.T, cur = run.cur, btn = $('#runBtn');
+  cur.running = true; btn.disabled = true; btn.textContent = 'Выполняется…';
+  sfx.run(); $('#tests').classList.add('running');
+  const res = await runCode(cur.code, T.tests.map(t => t.e));
+  if (!run || run.cur !== cur) return;
+  cur.running = false; $('#tests').classList.remove('running');
+  const pass = renderTests(res);
+  if (!res.error && pass === T.tests.length) {
+    cur.passed = true; btn.textContent = '✓ Пройдено';
+    T.tests.forEach((_, k) => setTimeout(() => sfx.pass(k), k * 90));
+    setTimeout(() => { if (run && run.cur === cur) onCorrect(); }, T.tests.length * 90 + 280);
+  } else {
+    btn.disabled = false; btn.textContent = '▶ Запустить';
+    cur.fails++; run.codeFails++; run.streak = 0; updateHUD();
+    sfx.nope();
+    const tb = $('#tests'); tb.classList.remove('shake'); void tb.offsetWidth; tb.classList.add('shake');
+    if (cur.fails === 2) { renderActions(); toast('Застряли? Теперь доступна кнопка 👀 Решение.'); }
+    else toast(res.error ? 'Код выбросил ошибку — смотрите сообщение ниже.' : `Пройдено тестов: ${pass}/${T.tests.length} — продолжайте!`);
+  }
+}
+function showHint() {
+  if (!run || run.sheet) return;
+  const idx = run.cur.idx; if (run.hinted.has(idx)) return;
+  run.hinted.add(idx); run.hints++; sfx.hint();
+  $('#hintbox').hidden = false;
+  $('[data-act="hint"]').disabled = true;
+  $('#hintbox').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+function insertKey(k) {
+  if (k === '⇥') k = '  ';
+  sfx.type();
+  if (editor) { editor.insert(k); return; }
+  const inp = $('#blank'); if (inp && !inp.disabled) insertText(inp, k.trim() || k);
+}
+
+/* ---- results ---- */
+function completeLevel() {
+  stopTimer();
+  const L = run.L, i = run.i;
+  const penalty = run.mistakes + run.hints + Math.floor(run.codeFails / 2);
+  const stars = penalty === 0 ? 3 : penalty <= 2 ? 2 : 1;
+  const timeBonus = L.boss ? Math.round(run.time / 2) : 0;
+  const total = run.xp + stars * 10 * (L.tier + 1) + timeBonus;
+  const prev = save.levels[i], first = !prev;
+  save.levels[i] = { stars: Math.max(prev?.stars || 0, stars), xp: Math.max(prev?.xp || 0, total) };
+  const allDone = completedCount() === LEVELS.length;
+  if (allDone && !save.completedAt) save.completedAt = new Date().toISOString();
+  persist();
+  const nextI = i + 1 < LEVELS.length ? i + 1 : null;
+  const msg = stars === 3 ? 'Безупречно! Идеальное прохождение.' : stars === 2 ? 'Отличная работа — почти без ошибок.' : 'Пройдено! Перепройдите, чтобы получить 3 звезды.';
+  const nextBtn = allDone ? `<button class="btn" data-act="cert-close">🎓 Сертификат</button>`
+    : nextI != null ? `<button class="btn" data-act="next" data-i="${nextI}">Далее ▶</button>` : '';
+  sfx.complete(); Confetti.burst(L.boss ? 220 : 130);
+  openModal(`<div style="--tc:${run.tier.c}">
+    <div class="r-title">${L.boss ? 'Босс повержен!' : 'Уровень пройден!'}</div>
+    <div class="r-stars">${[0, 1, 2].map(s => `<span class="rs" id="rs${s}">★</span>`).join('')}</div>
+    <p>${msg}</p>
+    <div class="r-stats">
+      <div><b>+${total}</b><span>XP</span></div>
+      <div><b>${run.mistakes}</b><span>Ошибки</span></div>
+      <div><b>${run.bestStreak}</b><span>Лучшая серия</span></div>
+      ${L.boss ? `<div><b>+${timeBonus}</b><span>Бонус за время</span></div>` : ''}
+    </div>
+    ${first && nextI != null ? `<div class="unlock" id="unlock" hidden>🔓 Открыт уровень: ${esc(LEVELS[nextI].title)}</div>` : ''}
+    ${first && allDone ? `<div class="unlock" id="unlock" hidden>🎓 Сертификат открыт!</div>` : ''}
+    <div class="m-btns"><button class="btn ghost" data-act="map">Карта</button><button class="btn ghost" data-act="retry" data-i="${i}">↺</button>${nextBtn}</div>
+  </div>`, { dismiss: false });
+  [0, 1, 2].forEach(s => setTimeout(() => {
+    const el = $('#rs' + s); if (!el) return;
+    if (s < stars) { el.classList.add('on'); sfx.star(s); } else el.classList.add('off');
+  }, 550 + s * 380));
+  setTimeout(() => { const u = $('#unlock'); if (u) { u.hidden = false; allDone ? sfx.fanfare() : sfx.unlock(); } }, 1800);
+}
+function failLevel(reason) {
+  stopTimer(); sfx.fail();
+  const r = run;
+  openModal(`<div>
+    <div class="f-ico">${reason === 'time' ? '⏰' : '💔'}</div>
+    <h2>${reason === 'time' ? 'Время вышло!' : 'Жизни закончились'}</h2>
+    <p>Выполнено заданий: ${r.done.size} из ${r.L.tasks.length}. Каждый баг чему-то учит — попробуйте ещё раз!</p>
+    <div class="m-btns"><button class="btn ghost" data-act="map">Карта</button><button class="btn" data-act="retry" data-i="${r.i}">↺ Заново</button></div>
+  </div>`, { dismiss: false });
+}
+
+/* =====================================================================
+   SETTINGS
+   ===================================================================== */
+function openSettings() {
+  const wasPaused = run ? run.paused : null;
+  if (run) run.paused = true;
+  openModal(`<div>
+    <h2>⚙️ Настройки</h2>
+    <button class="toggle ${save.sfx ? 'on' : ''}" data-act="toggle-sfx"><span>🔊 Звуковые эффекты</span><span class="sw"></span></button>
+    <button class="toggle ${save.music ? 'on' : ''}" data-act="toggle-music"><span>🎵 Музыка</span><span class="sw"></span></button>
+    <div class="m-btns"><button class="btn bad sm" data-act="reset">Сбросить прогресс</button><button class="btn" data-act="close-modal">Готово</button></div>
+  </div>`, { onClose: () => { if (run && !run.sheet) run.paused = wasPaused; } });
+}
+
+/* =====================================================================
+   CERTIFICATE
+   ===================================================================== */
+function honor(stars) {
+  const p = stars / MAX_STARS;
+  return p >= .95 ? 'С высшим отличием' : p >= .8 ? 'С отличием' : p >= .6 ? 'С похвалой' : '';
+}
+function ensureCert() {
+  if (!save.completedAt) save.completedAt = new Date().toISOString();
+  if (!save.certId) {
+    const r = () => Math.random().toString(36).slice(2, 6).toUpperCase().padEnd(4, 'X');
+    save.certId = `JSO-${new Date(save.completedAt).getFullYear()}-${r()}-${r()}`;
+  }
+  persist();
+}
+function showCertificate() {
+  stopTimer(); run = null; Music.setMode('calm');
+  const done = completedCount();
+  if (done < LEVELS.length) {
+    const pct = Math.round(done / LEVELS.length * 100);
+    setScreen(topbar() + `<div class="locked-cert">
+      <div class="ring" style="--p:${pct}"><div>🔒</div></div>
+      <h2 style="font-size:26px;font-weight:900">Сертификат закрыт</h2>
+      <p style="color:var(--muted)">Пройдите все ${LEVELS.length} уровней, чтобы получить сертификат JS Odyssey. Пройдено ${pct}% пути.</p>
+      <div class="tier-list">${TIERS.map((t, ti) => { const idx = LEVELS.map((l, i) => i).filter(i => LEVELS[i].tier === ti); const d = idx.filter(i => save.levels[i]).length; return `<div class="${d === idx.length ? 'done' : ''}">${t.icon} ${t.name}<span>${d === idx.length ? '✓ Пройдено' : d + '/' + idx.length}</span></div>`; }).join('')}</div>
+      <button class="btn" data-act="play" style="margin-top:8px">Продолжить квест ▶</button>
+    </div>`);
+    return;
+  }
+  ensureCert();
+  setScreen(topbar() + `<div class="cert-wrap">
+    <h1>🎓 Вы справились!</h1>
+    <p>Введите имя так, как оно должно быть написано в сертификате.</p>
+    <input class="name-input" id="certName" maxlength="42" placeholder="Ваше полное имя" value="${esc(save.name)}" autocomplete="name">
+    <div class="cert-frame"><canvas id="certCanvas" width="2000" height="1414"></canvas></div>
+    <div class="m-btns" style="width:min(100%,460px)"><button class="btn" data-act="dl-png">⬇ PNG-изображение</button><button class="btn ghost" data-act="dl-pdf">⬇ PDF</button></div>
+    <p class="foot-note">Номер сертификата ${esc(save.certId)} · звёзд: ${totalStars()}/${MAX_STARS} · ${fmtNum(totalXP())} XP</p>
+  </div>`);
+  const cv = $('#certCanvas'), inp = $('#certName');
+  drawCert(cv, save.name);
+  let raf = 0;
+  inp.addEventListener('input', () => { save.name = inp.value; persist(); cancelAnimationFrame(raf); raf = requestAnimationFrame(() => drawCert(cv, save.name)); });
+  setTimeout(() => { sfx.fanfare(); Confetti.burst(220); }, 250);
+}
+function roundRectPath(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function spaced(c, text, x, y, sp) {
+  const chars = [...text], widths = chars.map(ch => c.measureText(ch).width);
+  const total = widths.reduce((a, b) => a + b, 0) + sp * (chars.length - 1);
+  const align = c.textAlign; c.textAlign = 'left';
+  let cx = x - total / 2; chars.forEach((ch, i) => { c.fillText(ch, cx, y); cx += widths[i] + sp; });
+  c.textAlign = align;
+}
+function wrapLines(c, text, maxW) {
+  const words = text.split(' '), lines = []; let line = '';
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (c.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+function drawCert(cv, rawName) {
+  const W = 2000, H = 1414, c = cv.getContext('2d');
+  const navy = '#14213d', gold = '#b8892b', ink = '#2b2f3a', grey = '#6b7080';
+  const serif = 'Georgia, "Times New Roman", Times, serif', sans = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+  const name = (rawName || '').trim();
+  c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  // paper
+  let g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#fffdf7'); g.addColorStop(1, '#f3e9d2'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  // guilloche rosette watermark
+  c.save(); c.translate(W / 2, H / 2 + 30); c.strokeStyle = 'rgba(184,137,43,0.075)'; c.lineWidth = 1.4;
+  for (let i = 0; i < 60; i++) { c.rotate(Math.PI / 30); c.beginPath(); c.ellipse(0, 0, 560, 190, 0, 0, Math.PI * 2); c.stroke(); }
+  c.restore();
+  // wave bands
+  c.lineWidth = 1.1;
+  for (const [y0, col] of [[118, 'rgba(20,33,61,0.06)'], [H - 150, 'rgba(20,33,61,0.06)']]) {
+    c.strokeStyle = col;
+    for (let k = 0; k < 6; k++) { c.beginPath(); for (let x = 110; x <= W - 110; x += 6) { const y = y0 + k * 5 + Math.sin(x / 38 + k * .7) * 7; x === 110 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke(); }
+  }
+  // borders
+  c.strokeStyle = navy; c.lineWidth = 26; c.strokeRect(38, 38, W - 76, H - 76);
+  c.strokeStyle = gold; c.lineWidth = 5; c.strokeRect(70, 70, W - 140, H - 140);
+  c.strokeStyle = navy; c.lineWidth = 1.5; c.strokeRect(84, 84, W - 168, H - 168);
+  // corner ornaments
+  for (const [x, y, sx, sy] of [[84, 84, 1, 1], [W - 84, 84, -1, 1], [84, H - 84, 1, -1], [W - 84, H - 84, -1, -1]]) {
+    c.save(); c.translate(x, y); c.scale(sx, sy);
+    c.strokeStyle = gold; c.lineWidth = 3; c.beginPath(); c.arc(0, 0, 70, 0, Math.PI / 2); c.stroke();
+    c.lineWidth = 1.5; c.beginPath(); c.arc(0, 0, 90, 0, Math.PI / 2); c.stroke();
+    c.fillStyle = gold; c.beginPath(); c.moveTo(34, 20); c.lineTo(48, 34); c.lineTo(34, 48); c.lineTo(20, 34); c.closePath(); c.fill();
+    c.restore();
+  }
+  // JS badge
+  c.save(); c.translate(W / 2, 185); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 16; c.shadowOffsetY = 6;
+  roundRectPath(c, -55, -55, 110, 110, 18); c.fillStyle = '#f7df1e'; c.fill(); c.shadowColor = 'transparent';
+  c.fillStyle = '#1a1a1a'; c.font = `900 54px ${sans}`; c.textAlign = 'right'; c.fillText('JS', 44, 44); c.restore();
+  c.textAlign = 'center';
+  // titles
+  c.fillStyle = navy; c.font = `bold 78px ${serif}`; spaced(c, 'СЕРТИФИКАТ', W / 2, 335, 22);
+  c.fillStyle = gold; c.font = `600 30px ${sans}`; spaced(c, 'О ПРОХОЖДЕНИИ КУРСА', W / 2, 392, 14);
+  // divider
+  c.strokeStyle = gold; c.lineWidth = 2; c.beginPath(); c.moveTo(W / 2 - 200, 430); c.lineTo(W / 2 - 22, 430); c.moveTo(W / 2 + 22, 430); c.lineTo(W / 2 + 200, 430); c.stroke();
+  c.fillStyle = gold; c.beginPath(); c.moveTo(W / 2, 420); c.lineTo(W / 2 + 10, 430); c.lineTo(W / 2, 440); c.lineTo(W / 2 - 10, 430); c.closePath(); c.fill();
+  c.fillStyle = grey; c.font = `italic 38px ${serif}`; c.fillText('Настоящий сертификат с гордостью вручается', W / 2, 500);
+  // name
+  let fs = 124; c.font = `italic bold ${fs}px ${serif}`;
+  const shown = name || 'Ваше имя';
+  while (c.measureText(shown).width > 1380 && fs > 60) { fs -= 4; c.font = `italic bold ${fs}px ${serif}`; }
+  c.fillStyle = name ? navy : 'rgba(20,33,61,.25)'; c.fillText(shown, W / 2, 628);
+  g = c.createLinearGradient(W / 2 - 560, 0, W / 2 + 560, 0); g.addColorStop(0, 'rgba(184,137,43,0)'); g.addColorStop(.5, gold); g.addColorStop(1, 'rgba(184,137,43,0)');
+  c.strokeStyle = g; c.lineWidth = 3; c.beginPath(); c.moveTo(W / 2 - 560, 668); c.lineTo(W / 2 + 560, 668); c.stroke();
+  // body
+  c.fillStyle = ink; c.font = `34px ${serif}`;
+  const body = `за успешное прохождение всех ${LEVELS.length} уровней JS Odyssey — от переменных и циклов до замыканий, классов, промисов и рекурсии — и уверенное владение языком программирования JavaScript.`;
+  const lines = wrapLines(c, body, 1320); let y = 738;
+  lines.forEach(l => { c.fillText(l, W / 2, y); y += 50; });
+  const stars = totalStars(), hon = honor(stars);
+  if (hon) { c.fillStyle = gold; c.font = `italic 600 40px ${serif}`; c.fillText('— ' + hon + ' —', W / 2, y + 22); y += 60; }
+  // stats
+  c.fillStyle = navy; c.font = `bold 26px ${sans}`;
+  spaced(c, `★ ${stars} / ${MAX_STARS} ЗВЁЗД     •     ${fmtNum(totalXP())} XP     •     ${LEVELS.length} / ${LEVELS.length} УРОВНЕЙ`, W / 2, Math.max(y + 34, 990), 3);
+  // seal ribbons
+  const sx = W / 2, sy = 1172;
+  c.fillStyle = navy;
+  c.beginPath(); c.moveTo(sx - 70, sy + 40); c.lineTo(sx - 20, sy + 60); c.lineTo(sx - 55, sy + 145); c.lineTo(sx - 78, sy + 120); c.lineTo(sx - 108, sy + 133); c.closePath(); c.fill();
+  c.fillStyle = '#8c2f39';
+  c.beginPath(); c.moveTo(sx + 70, sy + 40); c.lineTo(sx + 20, sy + 60); c.lineTo(sx + 55, sy + 145); c.lineTo(sx + 78, sy + 120); c.lineTo(sx + 108, sy + 133); c.closePath(); c.fill();
+  // seal body
+  c.save(); c.translate(sx, sy);
+  c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 18; c.shadowOffsetY = 6;
+  g = c.createRadialGradient(-30, -30, 10, 0, 0, 115); g.addColorStop(0, '#f5dc8a'); g.addColorStop(.6, '#d4a53c'); g.addColorStop(1, '#a87a1f');
+  c.fillStyle = g; c.beginPath();
+  for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2, r = k % 2 ? 98 : 110; c.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+  c.closePath(); c.fill(); c.shadowColor = 'transparent';
+  c.strokeStyle = 'rgba(255,248,220,.85)'; c.lineWidth = 3; c.beginPath(); c.arc(0, 0, 80, 0, Math.PI * 2); c.stroke();
+  c.lineWidth = 1.2; c.beginPath(); c.arc(0, 0, 72, 0, Math.PI * 2); c.stroke();
+  c.fillStyle = '#5a3d06'; c.font = `bold 17px ${sans}`; spaced(c, 'JS ODYSSEY', 0, -22, 2);
+  c.font = `28px ${sans}`; c.fillText('★ ★ ★', 0, 16);
+  c.font = `bold 17px ${sans}`; spaced(c, 'ПРОЙДЕНО', 0, 44, 2);
+  c.restore();
+  // date & id
+  const date = new Date(save.completedAt || Date.now()).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
+  for (const [x, val, label] of [[520, date, 'ДАТА ЗАВЕРШЕНИЯ'], [W - 520, save.certId || '—', 'НОМЕР СЕРТИФИКАТА']]) {
+    c.fillStyle = ink; c.font = `34px ${serif}`; c.fillText(val, x, 1180);
+    c.strokeStyle = navy; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x - 210, 1202); c.lineTo(x + 210, 1202); c.stroke();
+    c.fillStyle = gold; c.font = `600 21px ${sans}`; spaced(c, label, x, 1240, 5);
+  }
+}
+function certFileName(ext) { const slug = (save.name || 'certificate').trim().replace(/[^\p{L}\p{N}\- ]+/gu, '').replace(/\s+/g, '-') || 'certificate'; return `JS-Odyssey-Сертификат-${slug}.${ext}`; }
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function needName() {
+  if ((save.name || '').trim()) return false;
+  sfx.locked(); toast('✍️ Сначала введите имя'); const i = $('#certName'); i && i.focus(); return true;
+}
+function downloadPNG() {
+  if (needName()) return;
+  const cv = $('#certCanvas'); drawCert(cv, save.name);
+  cv.toBlob(b => { downloadBlob(b, certFileName('png')); sfx.unlock(); toast('⬇ Сертификат сохранён в PNG'); }, 'image/png');
+}
+function downloadPDF() {
+  if (needName()) return;
+  const cv = $('#certCanvas'); drawCert(cv, save.name);
+  const bin = atob(cv.toDataURL('image/jpeg', .93).split(',')[1]);
+  const img = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) img[k] = bin.charCodeAt(k);
+  const enc = s => new TextEncoder().encode(s), PW = 842, PH = 595;
+  const chunks = [], offs = []; let len = 0;
+  const push = u => { chunks.push(u); len += u.length; };
+  const obj = (n, body) => { offs[n] = len; push(enc(`${n} 0 obj\n${body}\nendobj\n`)); };
+  push(enc('%PDF-1.4\n')); push(new Uint8Array([0x25, 0xE2, 0xE3, 0xCF, 0xD3, 0x0A]));
+  obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  obj(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+  offs[4] = len; push(enc(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${cv.width} /Height ${cv.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.length} >>\nstream\n`)); push(img); push(enc('\nendstream\nendobj\n'));
+  const content = `q ${PW} 0 0 ${PH} 0 0 cm /Im0 Do Q`;
+  obj(5, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+  obj(6, '<< /Title (JS Odyssey Certificate of Achievement) /Producer (JS Odyssey) >>');
+  const xref = len;
+  let x = 'xref\n0 7\n0000000000 65535 f \n';
+  for (let n = 1; n <= 6; n++) x += String(offs[n]).padStart(10, '0') + ' 00000 n \n';
+  x += `trailer\n<< /Size 7 /Root 1 0 R /Info 6 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  push(enc(x));
+  downloadBlob(new Blob(chunks, { type: 'application/pdf' }), certFileName('pdf'));
+  sfx.unlock(); toast('⬇ Сертификат сохранён в PDF');
+}
+
+/* =====================================================================
+   EVENTS
+   ===================================================================== */
+const SILENT = new Set(['opt', 'check', 'run', 'cont', 'hint', 'node', 'place', 'unplace', 'close-modal-bg', 'dl-png', 'dl-pdf', 'next', 'retry', 'start']);
+const ACT = {
+  play: () => { closeModal(); showMap(); },
+  title: () => showTitle(),
+  settings: () => openSettings(),
+  cert: () => { closeModal(); showCertificate(); },
+  'cert-close': () => { closeModal(); showCertificate(); },
+  node: el => {
+    const i = +el.dataset.i;
+    if (!isUnlocked(i)) { sfx.locked(); el.parentElement.classList.remove('shake'); void el.offsetWidth; el.parentElement.classList.add('shake'); toast('🔒 Сначала пройдите предыдущий уровень'); return; }
+    sfx.select(); openIntro(i);
+  },
+  start: el => { sfx.unlock(); closeModal(); startLevel(+el.dataset.i); },
+  next: el => { sfx.click(); const i = +el.dataset.i; closeModal(); showMap(i); setTimeout(() => openIntro(i), 450); },
+  retry: el => { sfx.click(); const i = +el.dataset.i; closeModal(); startLevel(i); },
+  map: () => { closeModal(); showMap(); },
+  quit: () => {
+    if (!run) return showMap();
+    run.paused = true;
+    openModal(`<div><div class="f-ico">🚪</div><h2>Покинуть уровень?</h2><p>Прогресс на этом уровне будет потерян.</p>
+      <div class="m-btns"><button class="btn ghost" data-act="close-modal">Остаться</button><button class="btn bad" data-act="map">Выйти</button></div></div>`,
+      { onClose: () => { if (run) run.paused = run.sheet; } });
+  },
+  'close-modal': () => closeModal(),
+  'close-modal-bg': (el, e) => { if (e.target === el) { sfx.click(); closeModal(); } },
+  opt: el => {
+    if (!run || run.sheet) return;
+    sfx.select();
+    $$('.opt').forEach(b => b.classList.remove('sel')); el.classList.add('sel');
+    run.cur.sel = +el.dataset.k; $('#checkBtn').disabled = false;
+  },
+  check: () => doCheck(),
+  run: () => runTests(),
+  cont: () => { sfx.click(); continueNext(); },
+  hint: () => showHint(),
+  place: el => { if (run.sheet) return; sfx.select(); const j = +el.dataset.j; run.cur.placed.push(run.cur.pool.splice(j, 1)[0]); renderOrder(); },
+  unplace: el => { if (run.sheet) return; tone(440, { dur: .07, type: 'triangle', vol: .1, slide: 330 }); const p = +el.dataset.p; run.cur.pool.push(run.cur.placed.splice(p, 1)[0]); renderOrder(); },
+  'reset-code': () => { if (editor && !run.sheet) { editor.set(run.cur.T.starter); renderTests(); } },
+  solution: () => {
+    if (!editor || run.sheet) return;
+    editor.set(run.cur.T.solution);
+    if (!run.cur.usedSolution) { run.cur.usedSolution = true; run.hints += 2; }
+    sfx.hint(); toast('Решение загружено — разберитесь в нём и запустите тесты.', 3000);
+  },
+  'toggle-sfx': el => { save.sfx = !save.sfx; persist(); el.classList.toggle('on', save.sfx); sfx.select(); },
+  'toggle-music': el => { save.music = !save.music; persist(); el.classList.toggle('on', save.music); save.music ? Music.start() : Music.stop(); },
+  reset: () => openModal(`<div><div class="f-ico">⚠️</div><h2>Сбросить весь прогресс?</h2><p>Звёзды, XP и открытые уровни будут удалены. Это нельзя отменить.</p>
+    <div class="m-btns"><button class="btn ghost" data-act="close-modal">Отмена</button><button class="btn bad" data-act="reset-yes">Удалить</button></div></div>`),
+  'reset-yes': () => { const keep = { sfx: save.sfx, music: save.music }; save = Object.assign(freshSave(), keep); persist(); closeModal(); showTitle(); toast('Прогресс сброшен'); },
+  'dl-png': () => downloadPNG(),
+  'dl-pdf': () => downloadPDF(),
+};
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act; if (!ACT[act]) return;
+  if (el.disabled) return;
+  if (!SILENT.has(act)) sfx.click();
+  ACT[act](el, e);
+});
+document.addEventListener('pointerdown', e => {
+  const k = e.target.closest('.key'); if (!k) return;
+  e.preventDefault(); insertKey(k.dataset.key);
+});
+let lastHover = null;
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('.opt,.node,.ln,.btn:not(:disabled)'); if (el === lastHover) return; lastHover = el;
+  if (el && matchMedia('(hover:hover)').matches) sfx.hover();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && modalOpen()) { if (modalDismiss) closeModal(); return; }
+  if (!run || modalOpen()) return;
+  const tag = e.target.tagName;
+  if (tag === 'TEXTAREA' || tag === 'BUTTON') return;
+  if (run.sheet) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); continueNext(); } return; }
+  const T = run.cur && run.cur.T; if (!T) return;
+  if (T.type === 'quiz' && /^[1-9]$/.test(e.key)) { const b = $$('.opt')[+e.key - 1]; if (b) ACT.opt(b); return; }
+  if (e.key === 'Enter' && !e.repeat) { e.preventDefault(); T.type === 'code' ? runTests() : doCheck(); }
+});
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+showTitle();
+</script>
+</body>
+</html>
